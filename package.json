@@ -1,26 +1,12 @@
 {
   "name": "service-center_rest-api",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "cross-env NODE_ENV=production node ./server.js",
     "start:dev": "cross-env NODE_ENV=development nodemon ./server.js",
     "lint": "eslint **/*.js",
     "lint:fix": "eslint --fix **/*.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Zerossik/service-center_rest-api.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Zerossik/service-center_rest-api/issues"
-  },
-  "homepage": "https://github.com/Zerossik/service-center_rest-api#readme",
   "dependencies": {
     "bcrypt": "^5.1.0",
     "cors": "2.8.5",
