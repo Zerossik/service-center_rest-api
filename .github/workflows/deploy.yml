@@ -14,8 +14,8 @@ jobs:
       - name: Install, lint, build 🔧
         run: |
           npm install
-          npm run lint:js
-          npm run build
+          npm run lint
+          npm start
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.0
