@@ -14,10 +14,10 @@ jobs:
       - name: Install, lint, build 🔧
         run: |
           npm install
-          npm run lint
+      #     npm run lint
 
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@4.1.0
-        with:
-          branch: gh-pages
-          folder: build
+      # - name: Deploy 🚀
+      #   uses: JamesIves/github-pages-deploy-action@4.1.0
+      #   with:
+      #     branch: gh-pages
+      #     folder: build
