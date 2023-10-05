@@ -1,0 +1,41 @@
+{
+  "name": "service-center_rest-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cross-env NODE_ENV=production node ./server.js",
+    "start:dev": "cross-env NODE_ENV=development nodemon ./server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zerossik/service-center_rest-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Zerossik/service-center_rest-api/issues"
+  },
+  "homepage": "https://github.com/Zerossik/service-center_rest-api#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cors": "2.8.5",
+    "cross-env": "7.0.3",
+    "dotenv": "^16.3.1",
+    "express": "4.17.1",
+    "gravatar": "^1.8.2",
+    "jimp": "^0.22.10",
+    "joi": "^17.9.2",
+    "jsonwebtoken": "^9.0.1",
+    "mongoose": "^7.4.0",
+    "morgan": "1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "nanoid": "^3.3.6",
+    "nodemailer": "^6.9.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
