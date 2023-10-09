@@ -1,6 +1,9 @@
 {
   "name": "service-center_rest-api",
   "version": "1.0.0",
+  "engines": {
+    "node": "> 18.0.0 < 19.0.0"
+  },
   "scripts": {
     "start": "cross-env NODE_ENV=production node ./server.js",
     "start:dev": "cross-env NODE_ENV=development nodemon ./server.js",
