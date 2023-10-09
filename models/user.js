@@ -2,6 +2,7 @@ const { Schema, model } = require('mongoose');
 const joi = require('joi');
 
 const joiUserSchema = joi.object({
+  name: joi.string().required(),
   email: joi
     .string()
     .required()
@@ -12,6 +13,7 @@ const joiUserSchema = joi.object({
 
 const userSchema = new Schema(
   {
+    name: { type: String, required: [true, 'Name is required'] },
     email: {
       type: String,
       required: [true, 'Email is required'],
