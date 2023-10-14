@@ -4,6 +4,9 @@ const { httpError } = require('../helper');
 const bcrypt = require('bcrypt');
 const { nanoid } = require('nanoid');
 const jwt = require('jsonwebtoken');
+const queryString = require('query-string');
+const { URL } = require('url');
+const axios = require('axios');
 
 class AuthController {
   signup = tryCatchDecorator(async (req, res) => {
@@ -62,6 +65,59 @@ class AuthController {
       },
     });
   });
+
+  google = (req, res, next) => {
+    const { GOOGLE_ID, BASE_URL } = process.env;
+    const stringifiedParams = queryString.stringify({
+      client_id: GOOGLE_ID,
+      redirect_uri: `${BASE_URL}/api/auth/google-redirect`,
+      scope: [
+        'https://www.googleapis.com/auth/userinfo.email',
+        'https://www.googleapis.com/auth/userinfo.profile',
+      ].join(' '),
+      response_type: 'code',
+      access_type: 'offline',
+      prompt: 'consent',
+    });
+    return res.redirect(
+      `https://accounts.google.com/o/oauth2/v2/auth?${stringifiedParams}`
+    );
+  };
+
+  googleRedirect = async (req, res) => {
+    const { GOOGLE_ID, GOOGLE_SECRET, BASE_URL } = process.env;
+    const fullUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+
+    const urlObj = new URL(fullUrl);
+    const urlParams = queryString.parse(urlObj.search);
+    const code = urlParams.code;
+    if (!code)
+      return res.status(400).json({ code: 400, message: 'bad request' });
+
+    const token = await axios({
+      url: 'https://oauth2.googleapis.com/token',
+      method: 'post',
+      data: {
+        client_id: GOOGLE_ID,
+        client_secret: GOOGLE_SECRET,
+        redirect_uri: `${BASE_URL}/api/auth/google-redirect`,
+        grant_type: 'authorization_code',
+        code,
+      },
+    });
+
+    const userData = await axios({
+      url: 'https://www.googleapis.com/oauth2/v2/userinfo',
+      method: 'get',
+      headers: {
+        Authorization: `Bearer ${token.data.access_token}`,
+      },
+    });
+    console.log(userData.data);
+
+    // моя логика работы с базой
+    res.redirect(`http://127.0.0.1:5500`);
+  };
 }
 
 module.exports = new AuthController();
