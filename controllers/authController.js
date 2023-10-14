@@ -76,7 +76,6 @@ class AuthController {
         'https://www.googleapis.com/auth/userinfo.profile',
       ].join(' '),
       response_type: 'code',
-      access_type: 'offline',
       prompt: 'consent',
     });
     return res.redirect(
