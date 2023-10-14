@@ -116,7 +116,8 @@ class AuthController {
     console.log(userData.data);
 
     // моя логика работы с базой
-    res.redirect(`http://127.0.0.1:5500`);
+
+    res.redirect(BASE_URL);
   };
 }
 
