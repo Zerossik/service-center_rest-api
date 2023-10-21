@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const { authRouter } = require('./routes/api/');
 const { errorHandler } = require('./middleware');
+const { homePageController } = require('./controllers');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 
+app.get('/', homePageController);
 app.use('/api/auth', authRouter);
 
 app.use((req, res) => {

@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 const joi = require('joi');
 
-const joiUserSchema = joi.object({
+const joiUserSchemaSignUp = joi.object({
   name: joi.string().required(),
   email: joi
     .string()
@@ -9,7 +9,15 @@ const joiUserSchema = joi.object({
     .pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$/),
 
   password: joi.string().required().min(6),
-});
+}); // JOI схема реєстрації користувача
+
+const joiUserSchemaSignIn = joi.object({
+  email: joi
+    .string()
+    .required()
+    .pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$/),
+  password: joi.string().required().min(6),
+}); // JOI схема авторізації користувача
 
 const userSchema = new Schema(
   {
@@ -34,11 +42,13 @@ const userSchema = new Schema(
     },
   },
   { versionKey: false, timestamps: true }
-);
+); // Схема для моделі MongoDB
 
 const User = model('user', userSchema);
 
 module.exports = {
   User,
-  joiUserSchema,
+
+  joiUserSchemaSignUp,
+  joiUserSchemaSignIn,
 };

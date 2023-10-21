@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, GoogleModel } = require('../models');
 const { tryCatchDecorator } = require('../decorators');
 const { httpError } = require('../helper');
 const bcrypt = require('bcrypt');
@@ -23,6 +23,7 @@ class AuthController {
       password: hashPassword,
       verificationToken,
     });
+
     res.status(201);
     res.json({
       code: 201,
@@ -76,6 +77,7 @@ class AuthController {
         'https://www.googleapis.com/auth/userinfo.profile',
       ].join(' '),
       response_type: 'code',
+      // access_type: 'offline',
       prompt: 'consent',
     });
     return res.redirect(
@@ -84,7 +86,7 @@ class AuthController {
   };
 
   googleRedirect = async (req, res) => {
-    const { GOOGLE_ID, GOOGLE_SECRET, BASE_URL } = process.env;
+    const { GOOGLE_ID, GOOGLE_SECRET, BASE_URL, SECRET_KEY } = process.env;
     const fullUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
 
     const urlObj = new URL(fullUrl);
@@ -112,11 +114,40 @@ class AuthController {
         Authorization: `Bearer ${token.data.access_token}`,
       },
     });
-    console.log(userData.data);
 
     // моя логика работы с базой
+    // Перевіряю, чи є такий юзер в базі (по полю email) ? логіню юзера : реєструю, а потім логіню
+    const { email, name } = userData.data;
 
-    res.redirect(BASE_URL);
+    const user = await GoogleModel.findOne({ email });
+    console.log(user);
+    if (!user) {
+      const newUser = { email, name };
+      const createdUser = await GoogleModel.create({
+        ...newUser,
+      });
+      const payload = {
+        id: createdUser._id,
+      };
+
+      const userToken = jwt.sign(payload, SECRET_KEY, { expiresIn: '30d' });
+
+      createdUser.token = userToken;
+      createdUser.save();
+
+      return res.redirect(`${BASE_URL}?token=${userToken}`);
+    }
+
+    const payload = {
+      id: user._id,
+    };
+
+    const userToken = jwt.sign(payload, SECRET_KEY, { expiresIn: '30d' });
+
+    user.token = userToken;
+    user.save();
+
+    res.redirect(`${BASE_URL}?token=${userToken}`);
   };
 }
 
