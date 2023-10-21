@@ -1,7 +1,8 @@
-const { User } = require('./user');
-const { joiUserSchema } = require('./user');
+const { User, joiUserSchemaSignUp, joiUserSchemaSignIn } = require('./user');
 
 module.exports = {
   User,
-  joiUserSchema,
+  joiUserSchemaSignUp,
+  joiUserSchemaSignIn,
+  GoogleModel: require('./googleModel'),
 };
