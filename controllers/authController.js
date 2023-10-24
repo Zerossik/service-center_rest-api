@@ -1,6 +1,6 @@
 const { User, GoogleModel } = require('../models');
 const { tryCatchDecorator } = require('../decorators');
-const { httpError } = require('../helper');
+const { httpError, createToken } = require('../helper');
 const bcrypt = require('bcrypt');
 const { nanoid } = require('nanoid');
 const jwt = require('jsonwebtoken');
@@ -10,7 +10,7 @@ const axios = require('axios');
 
 class AuthController {
   signup = tryCatchDecorator(async (req, res) => {
-    const { name, email, password } = req.body;
+    const { email, password } = req.body;
     const getUserByEmail = await User.findOne({ email });
 
     if (getUserByEmail) throw httpError(409);
@@ -38,21 +38,18 @@ class AuthController {
   signin = tryCatchDecorator(async (req, res) => {
     const { email, password } = req.body;
 
-    const { SECRET_KEY } = process.env;
+    if (!email || !password) throw httpError(401, 'Email or password is wrong');
 
     const user = await User.findOne({ email });
 
-    if (!user) throw httpError(401, 'Email or password is wrong');
+    if (!user || !user.password)
+      throw httpError(401, 'Email or password is wrong');
 
     const veryfyPass = await bcrypt.compare(password, user.password);
 
     if (!veryfyPass) throw httpError(401, 'Email or password is wrong');
 
-    const payload = {
-      id: user._id,
-    };
-
-    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '30d' });
+    const token = createToken(user);
 
     await User.findByIdAndUpdate(user._id, { token });
 
@@ -86,7 +83,7 @@ class AuthController {
   };
 
   googleRedirect = async (req, res) => {
-    const { GOOGLE_ID, GOOGLE_SECRET, BASE_URL, SECRET_KEY } = process.env;
+    const { GOOGLE_ID, GOOGLE_SECRET, BASE_URL } = process.env;
     const fullUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
 
     const urlObj = new URL(fullUrl);
@@ -115,39 +112,26 @@ class AuthController {
       },
     });
 
-    // моя логика работы с базой
-    // Перевіряю, чи є такий юзер в базі (по полю email) ? логіню юзера : реєструю, а потім логіню
     const { email, name } = userData.data;
 
     const user = await GoogleModel.findOne({ email });
-    console.log(user);
+
     if (!user) {
       const newUser = { email, name };
       const createdUser = await GoogleModel.create({
         ...newUser,
       });
-      const payload = {
-        id: createdUser._id,
-      };
 
-      const userToken = jwt.sign(payload, SECRET_KEY, { expiresIn: '30d' });
-
-      createdUser.token = userToken;
+      createdUser.token = createToken(createdUser);
       createdUser.save();
 
-      return res.redirect(`${BASE_URL}?token=${userToken}`);
+      return res.redirect(`${BASE_URL}?token=${createdUser.token}`);
     }
 
-    const payload = {
-      id: user._id,
-    };
-
-    const userToken = jwt.sign(payload, SECRET_KEY, { expiresIn: '30d' });
-
-    user.token = userToken;
+    user.token = createToken(user);
     user.save();
 
-    res.redirect(`${BASE_URL}?token=${userToken}`);
+    res.redirect(`${BASE_URL}?token=${user.token}`);
   };
 }
 
