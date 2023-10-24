@@ -10,7 +10,10 @@ const axios = require('axios');
 
 class AuthController {
   signup = tryCatchDecorator(async (req, res) => {
-    const { email, password } = req.body;
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) throw httpError(400, 'Bad Request');
+
     const getUserByEmail = await User.findOne({ email });
 
     if (getUserByEmail) throw httpError(409);
@@ -38,7 +41,7 @@ class AuthController {
   signin = tryCatchDecorator(async (req, res) => {
     const { email, password } = req.body;
 
-    if (!email || !password) throw httpError(401, 'Email or password is wrong');
+    if (!email || !password) throw httpError(400, 'Bad Request');
 
     const user = await User.findOne({ email });
 
