@@ -2,6 +2,7 @@ const authRouter = require('express').Router();
 const { AuthController } = require('../../controllers');
 const { validateBody } = require('../../middleware');
 const { joiUserSchemaSignUp, joiUserSchemaSignIn } = require('../../models');
+const { isAuthenticated } = require('../../middleware');
 
 authRouter.post(
   '/signup',
@@ -14,6 +15,10 @@ authRouter.post(
   validateBody(joiUserSchemaSignIn),
   AuthController.signin
 );
+
+authRouter.post('/logout', isAuthenticated, AuthController.loguot);
+
 authRouter.get('/google', AuthController.google);
 authRouter.get('/google-redirect', AuthController.googleRedirect);
+
 module.exports = authRouter;
