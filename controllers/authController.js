@@ -3,7 +3,6 @@ const { tryCatchDecorator } = require('../decorators');
 const { httpError, createToken } = require('../helper');
 const bcrypt = require('bcrypt');
 const { nanoid } = require('nanoid');
-const jwt = require('jsonwebtoken');
 const queryString = require('query-string');
 const { URL } = require('url');
 const axios = require('axios');
@@ -66,6 +65,10 @@ class AuthController {
       },
     });
   });
+
+  loguot = (req, res) => {
+    res.status(201).json({ message: 'OK' });
+  };
 
   google = (req, res, next) => {
     const { GOOGLE_ID, BASE_URL } = process.env;
