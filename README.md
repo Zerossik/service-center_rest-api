@@ -22,3 +22,21 @@ ____
 ```
 ____
 ### `GET https://service-center-6fck.onrender.com/api/auth/google -  user auth with google!`
+Не отримує body!
+___
+### `GET https://service-center-6fck.onrender.com/api/auth/current - get current user!`
+Необхідно передати в headers поле `'Authorization': 'Bearer token'`
+```js
+headers{
+"authorization": "Bearer token"
+}
+```
+___
+### `POST https://service-center-6fck.onrender.com/api/auth/logout - logout user!`
+Необхідно передати в headers поле `'Authorization': 'Bearer token'`
+```js
+headers{
+"authorization": "Bearer token"
+}
+```
+___
