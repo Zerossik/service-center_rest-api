@@ -17,6 +17,7 @@ authRouter.post(
 );
 
 authRouter.post('/logout', isAuthenticated, AuthController.loguot);
+authRouter.get('/current', isAuthenticated, AuthController.current);
 
 authRouter.get('/google', AuthController.google);
 authRouter.get('/google-redirect', AuthController.googleRedirect);

@@ -46,6 +46,7 @@ class AuthController {
 
     if (!user || !user.password)
       throw httpError(401, 'Email or password is wrong');
+    // if (!user.veryfy) throw httpError(401, 'email address not confirmed'); // необхідно реалізувати підтвердження email користувача.
 
     const veryfyPass = await bcrypt.compare(password, user.password);
 
@@ -66,9 +67,27 @@ class AuthController {
     });
   });
 
-  loguot = (req, res) => {
-    res.status(201).json({ message: 'OK' });
-  };
+  loguot = tryCatchDecorator(async (req, res) => {
+    const { _id: id } = req.user;
+    await User.findByIdAndUpdate(id, { token: '' });
+    res.status(204);
+    res.json({ message: 'No Content' });
+  });
+
+  current = tryCatchDecorator(async (req, res) => {
+    const { user } = req;
+
+    res.status(200);
+    res.json({
+      code: 200,
+      token: user.token,
+      data: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+  });
 
   google = (req, res, next) => {
     const { GOOGLE_ID, BASE_URL } = process.env;
