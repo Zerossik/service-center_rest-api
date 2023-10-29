@@ -9,6 +9,7 @@ const httpError = (status, message = '') => {
     `${status} ${message === '' ? statusError[status] : message}`
   );
   error.status = status;
+
   return error;
 };
 
