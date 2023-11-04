@@ -17,8 +17,11 @@ const contactSchema = new Schema({
     type: String,
     default: 'accepted',
     masterName: { type: String, default: '' },
-    endDate: { type: Date, default: Date.now },
+    startDate: { type: Date, default: Date.now },
+    endDate: { type: Date },
   },
+  description: {},
+  failure: {}, // несправність
 });
 
 const Contacts = newModel('contacts', contactSchema);
