@@ -1,4 +1,4 @@
-const { Schema, model: newModel } = require('mongoose');
+const { Schema, model: newModel, Types } = require('mongoose');
 
 const contactSchema = new Schema({
   orderNumber: {
@@ -16,12 +16,13 @@ const contactSchema = new Schema({
   status: {
     type: String,
     default: 'accepted',
-    masterName: { type: String, default: '' },
-    startDate: { type: Date, default: Date.now },
-    endDate: { type: Date },
   },
+  masterName: { type: String, default: '' },
+  startDate: { type: Date, default: Date.now },
+  endDate: { type: Date },
+  owner: { type: Schema.Types.ObjectId, ref: 'user' },
   description: {},
-  failure: {}, // несправність
+  failure: { type: String, required: [true, 'failure is required'] }, // несправність
 });
 
 const Contacts = newModel('contacts', contactSchema);
