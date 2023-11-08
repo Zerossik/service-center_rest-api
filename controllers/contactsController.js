@@ -9,7 +9,6 @@ class ContactsController {
 
   addContact = tryCatchDecorator(async (req, res) => {
     const { _id: owner } = req.user;
-    // написати функцію, яка будет генерувати № замовлення
     const data = await Contacts.create({ ...req.body, owner });
     res.status(201);
     res.json({ code: 201, data: data });
