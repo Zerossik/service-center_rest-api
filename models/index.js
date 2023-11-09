@@ -1,5 +1,5 @@
 const { User, joiUserSchemaSignUp, joiUserSchemaSignIn } = require('./user');
-const { Contacts } = require('./contacts');
+const { Contacts, joiContactSchema } = require('./contacts');
 
 module.exports = {
   User,
@@ -7,4 +7,5 @@ module.exports = {
   joiUserSchemaSignIn,
   GoogleModel: require('./googleModel'),
   Contacts,
+  joiContactSchema,
 };

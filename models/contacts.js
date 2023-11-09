@@ -1,4 +1,21 @@
 const { Schema, model: newModel, Types } = require('mongoose');
+const joi = require('joi');
+
+const joiContactSchema = joi.object({
+  type: joi.string().required(),
+  manufacturer: joi.string().required(),
+  model: joi.string().required(),
+  divaceID: joi.string(),
+  customerName: joi.string().required(),
+  phoneNumber: joi.string().required(),
+  price: joi.number(),
+  status: joi.string(),
+  masterName: joi.string(),
+  startDate: joi.date(),
+  endDate: joi.date(),
+  description: joi.string(),
+  failure: joi.string().required(),
+});
 
 const CounterSchema = new Schema({
   _id: { type: String, required: true },
@@ -26,7 +43,7 @@ const contactSchema = new Schema({
   startDate: { type: Date, default: Date.now },
   endDate: { type: Date },
   owner: { type: Schema.Types.ObjectId, ref: 'user' },
-  description: {},
+  description: { type: String },
   failure: { type: String, required: [true, 'failure is required'] }, // несправність
 });
 
@@ -48,4 +65,4 @@ contactSchema.pre('save', async function (next) {
 
 const Contacts = newModel('contacts', contactSchema);
 
-module.exports = { Contacts };
+module.exports = { Contacts, joiContactSchema };
