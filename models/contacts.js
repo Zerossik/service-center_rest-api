@@ -1,9 +1,31 @@
-const { Schema, model: newModel } = require('mongoose');
+const { Schema, model: newModel, Types } = require('mongoose');
+const joi = require('joi');
+
+const joiContactSchema = joi.object({
+  type: joi.string().required(),
+  manufacturer: joi.string().required(),
+  model: joi.string().required(),
+  divaceID: joi.string(),
+  customerName: joi.string().required(),
+  phoneNumber: joi.string().required(),
+  price: joi.number(),
+  status: joi.string(),
+  masterName: joi.string(),
+  startDate: joi.date(),
+  endDate: joi.date(),
+  description: joi.string(),
+  failure: joi.string().required(),
+});
+
+const CounterSchema = new Schema({
+  _id: { type: String, required: true },
+  sequence_value: { type: Number, default: 0 },
+});
+const Counter = newModel('counter', CounterSchema);
 
 const contactSchema = new Schema({
   orderNumber: {
     type: String,
-    required: [true, 'order number is required'],
     unique: true,
   },
   type: { type: String, required: [true, 'device type is required'] },
@@ -16,14 +38,31 @@ const contactSchema = new Schema({
   status: {
     type: String,
     default: 'accepted',
-    masterName: { type: String, default: '' },
-    startDate: { type: Date, default: Date.now },
-    endDate: { type: Date },
   },
-  description: {},
-  failure: {}, // несправність
+  masterName: { type: String, default: '' },
+  startDate: { type: Date, default: Date.now },
+  endDate: { type: Date },
+  owner: { type: Schema.Types.ObjectId, ref: 'user' },
+  description: { type: String },
+  failure: { type: String, required: [true, 'failure is required'] }, // несправність
+});
+
+contactSchema.pre('save', async function (next) {
+  try {
+    const doc = this;
+    const counter = await Counter.findByIdAndUpdate(
+      { _id: 'contactsSequence' },
+      { $inc: { sequence_value: 1 } },
+      { new: true, upsert: true }
+    );
+    if (!counter) next(error);
+    doc.orderNumber = counter.sequence_value;
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 const Contacts = newModel('contacts', contactSchema);
 
-module.exports = { Contacts };
+module.exports = { Contacts, joiContactSchema };

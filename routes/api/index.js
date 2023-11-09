@@ -1,1 +1,4 @@
-module.exports = { authRouter: require('./auth') };
+module.exports = {
+  authRouter: require('./auth'),
+  contactsRouter: require('./contacts'),
+};

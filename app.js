@@ -3,7 +3,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const fs = require('fs');
 const path = require('path');
-const { authRouter } = require('./routes/api/');
+const { authRouter, contactsRouter } = require('./routes/api/');
 const { errorHandler } = require('./middleware');
 const { homePageController } = require('./controllers');
 
@@ -20,6 +20,7 @@ app.use(cors());
 
 app.get('/', homePageController);
 app.use('/api/auth', authRouter);
+app.use('/api/contacts', contactsRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: '404 Not Found' });
