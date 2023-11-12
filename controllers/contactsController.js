@@ -6,7 +6,7 @@ class ContactsController {
   getAll = tryCatchDecorator(async (req, res) => {
     const { _id: owner } = req.user;
 
-    const { page = 1, limit = 20 } = req.query;
+    const { page = 1, limit = 100 } = req.query;
     const skip = (page - 1) * limit;
 
     const data = await Contacts.find({ owner }, null, { skip, limit });
