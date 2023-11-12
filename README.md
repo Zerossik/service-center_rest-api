@@ -40,3 +40,79 @@ headers{
 }
 ```
 ___
+___
+
+## Contacts
+____
+### `GET https://service-center-6fck.onrender.com/api/contacts - get all contacts`
+Необхідно передати в headers поле `'Authorization': 'Bearer token'`
+```js
+headers{
+"authorization": "Bearer token"
+}
+```
+Для пагінації необхідно передати параметри **page** та **limit**. 
+Наприклад: `https://service-center-6fck.onrender.com/api/contacts?page=1&limit=10`.  
+Якщо не передати параметри пагінації, то сервер поверне 100 контактів за замовчуванням.
+___
+### `GET https://service-center-6fck.onrender.com/api/contacts/:id - get contact by ID`
+Необхідно передати в headers поле `'Authorization': 'Bearer token'`
+```js
+headers{
+"authorization": "Bearer token"
+}
+```
+Необхідно передати параметр **id**. Отримаємо контакт за його ID. 
+___
+### `POST https://service-center-6fck.onrender.com/api/contacts - create new contact`
+Необхідно передати в headers поле `'Authorization': 'Bearer token'`
+```js
+headers{
+"authorization": "Bearer token"
+}
+```
+Отримує body, обов'язкові поля: **type, manufacturer, model, customerName, phoneNumber, failure**.  
+Необов'язкові поля: **deviceID, price, status, masterName, endDate, description**.  
+example:
+```json
+{
+"type": "Phone",
+"manufacturer": "Samsung",
+"model": "S21 ULTRA",
+"customerName": "customerName",
+"phoneNumber": "customerPhoneNumber",
+"failure": "failure description",
+"deviceID": "device IMAI or SN",
+"price": 200,
+"status": "repairStatus",
+"masterName": "who made the repairs",
+"endDate": "end repair date",
+"description": "Your description"
+}
+```
+___
+### `PATCH https://service-center-6fck.onrender.com/api/contacts/:id - update contact by id`
+Необхідно передати в headers поле `'Authorization': 'Bearer token'`
+```js
+headers{
+"authorization": "Bearer token"
+}
+```
+Необхідно передати параметр **id**.  
+Отримує body, передаємо лише ті поля, які ми хочемо оновити.  
+example:
+```json
+"description": "Your description"
+```
+Оновлює контакт за його ID.
+___
+### `DELETE https://service-center-6fck.onrender.com/api/contacts/:id - delete contact by id`
+Необхідно передати в headers поле `'Authorization': 'Bearer token'`
+```js
+headers{
+"authorization": "Bearer token"
+}
+```
+Необхідно передати параметр **id**. Body не отримує.  
+Видаляє контакт за його ID
+___
