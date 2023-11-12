@@ -5,9 +5,7 @@ const httpError = (status, message = '') => {
     404: 'Not Found',
     409: 'Conflict',
   };
-  const error = new Error(
-    `${status} ${message === '' ? statusError[status] : message}`
-  );
+  const error = new Error(`${message === '' ? statusError[status] : message}`);
   error.status = status;
 
   return error;
