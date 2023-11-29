@@ -26,7 +26,7 @@ const Counter = newModel('counter', CounterSchema);
 const contactSchema = new Schema({
   orderNumber: {
     type: String,
-    unique: true,
+    default: '1',
   },
   type: { type: String, required: [true, 'device type is required'] },
   manufacturer: { type: String, required: [true, 'manufacturer is required'] },
@@ -47,21 +47,22 @@ const contactSchema = new Schema({
   failure: { type: String, required: [true, 'failure is required'] }, // несправність
 });
 
-contactSchema.pre('save', async function (next) {
-  try {
-    const doc = this;
-    const counter = await Counter.findByIdAndUpdate(
-      { _id: 'contactsSequence' },
-      { $inc: { sequence_value: 1 } },
-      { new: true, upsert: true }
-    );
-    if (!counter) next(error);
-    doc.orderNumber = counter.sequence_value;
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
+// contactSchema.pre('save', async function (next) {
+//   try {
+//     const doc = this;
+
+//     const counter = await Counter.findByIdAndUpdate(
+//       { _id: 'contactsSequence' },
+//       { $inc: { sequence_value: 1 } },
+//       { new: true, upsert: true }
+//     );
+//     if (!counter) next(error);
+//     doc.orderNumber = counter.sequence_value;
+//     next();
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 const Contacts = newModel('contacts', contactSchema);
 

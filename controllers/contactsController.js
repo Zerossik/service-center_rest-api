@@ -18,7 +18,20 @@ class ContactsController {
   addContact = tryCatchDecorator(async (req, res) => {
     const { _id: owner } = req.user;
 
-    const data = await Contacts.create({ ...req.body, owner });
+    const result = await Contacts.findOne({ owner: req.user._id }).sort({
+      $natural: -1,
+    });
+
+    let orderNumberCounter;
+    if (result) {
+      orderNumberCounter = Number(result.orderNumber) + 1;
+    }
+
+    const data = await Contacts.create({
+      ...req.body,
+      owner,
+      orderNumber: orderNumberCounter,
+    });
 
     res.status(201);
     res.json({ code: 201, data: data });
