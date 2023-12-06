@@ -1,6 +1,6 @@
 const { User, GoogleModel, TokenModel } = require('../models');
 const { tryCatchDecorator } = require('../decorators');
-const { httpError, createToken } = require('../helper');
+const { httpError, createToken, sendEmail } = require('../helper');
 const bcrypt = require('bcrypt');
 const { nanoid } = require('nanoid');
 const queryString = require('query-string');
@@ -69,7 +69,8 @@ class AuthController {
     });
   });
 
-  resetPassword = tryCatchDecorator(async (req, res) => {
+  requestPasswordReset = tryCatchDecorator(async (req, res) => {
+    const { BASE_URL } = process.env;
     const { email } = req.body;
     if (!email) throw httpError(400);
 
@@ -87,8 +88,23 @@ class AuthController {
       createdAt: Date.now(),
     }).save();
 
+    const data = {
+      to: email,
+      subject: 'Verify Emmail',
+      html: `<a href="${BASE_URL}/api/auth/resetPassword/${newToken}" target="_blank">Click verify email</a>`,
+    };
+
+    sendEmail(data)
+      .then(() => console.log('Email sended'))
+      .catch(error => console.log(error.message));
+
     res.status(201);
     res.json({ code: 201, message: 'Your password changed' });
+  });
+
+  resetPassword = tryCatchDecorator(async (req, res) => {
+    res.status(201);
+    res.json({ code: 201, message: 'your password was reseted' });
   });
 
   loguot = tryCatchDecorator(async (req, res) => {
