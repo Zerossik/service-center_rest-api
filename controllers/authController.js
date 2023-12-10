@@ -1,11 +1,12 @@
-const { User, GoogleModel } = require('../models');
+const { User, GoogleModel, TokenModel } = require('../models');
 const { tryCatchDecorator } = require('../decorators');
-const { httpError, createToken } = require('../helper');
+const { httpError, createToken, sendEmail } = require('../helper');
 const bcrypt = require('bcrypt');
 const { nanoid } = require('nanoid');
 const queryString = require('query-string');
 const { URL } = require('url');
 const axios = require('axios');
+const resetPassEmail = require('../template/resetPasswordEmail');
 
 class AuthController {
   signup = tryCatchDecorator(async (req, res) => {
@@ -52,7 +53,8 @@ class AuthController {
 
     if (!veryfyPass) throw httpError(401, 'Email or password is wrong');
 
-    const token = createToken(user);
+    const token = createToken(user._id);
+    console.log(token);
 
     await User.findByIdAndUpdate(user._id, { token });
 
@@ -65,6 +67,43 @@ class AuthController {
         email: user.email,
       },
     });
+  });
+
+  requestPasswordReset = tryCatchDecorator(async (req, res) => {
+    const { email } = req.body;
+    if (!email) throw httpError(400);
+
+    const user = await User.findOne({ email });
+    if (!user) throw httpError(404, `user ${email} not found`);
+
+    const token = await TokenModel.findOne({ user: user._id });
+    if (token) token.deleteOne();
+
+    const newToken = createToken(user._id, '1h');
+
+    await new TokenModel({
+      user: user._id,
+      token: newToken,
+      createdAt: Date.now(),
+    }).save();
+
+    const data = {
+      to: email,
+      subject: 'Скидання паролю',
+      html: resetPassEmail(newToken),
+    };
+
+    sendEmail(data)
+      .then(() => console.log('Email sended'))
+      .catch(error => console.log(error.message));
+
+    res.status(201);
+    res.json({ code: 201, message: 'Your password changed' });
+  });
+
+  resetPassword = tryCatchDecorator(async (req, res) => {
+    res.status(201);
+    res.json({ code: 201, message: 'your password was reseted' });
   });
 
   loguot = tryCatchDecorator(async (req, res) => {
@@ -147,13 +186,13 @@ class AuthController {
         ...newUser,
       });
 
-      createdUser.token = createToken(createdUser);
+      createdUser.token = createToken(createdUser._id);
       createdUser.save();
 
       return res.redirect(`${BASE_URL}?token=${createdUser.token}`);
     }
 
-    user.token = createToken(user);
+    user.token = createToken(user._id);
     user.save();
 
     res.redirect(`${BASE_URL}?token=${user.token}`);

@@ -3,6 +3,7 @@ const { Contacts, joiContactSchema } = require('./contacts');
 
 module.exports = {
   User,
+  TokenModel: require('./tokenModel'),
   joiUserSchemaSignUp,
   joiUserSchemaSignIn,
   GoogleModel: require('./googleModel'),
