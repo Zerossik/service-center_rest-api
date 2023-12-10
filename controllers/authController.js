@@ -6,7 +6,7 @@ const { nanoid } = require('nanoid');
 const queryString = require('query-string');
 const { URL } = require('url');
 const axios = require('axios');
-const jwt = require('jsonwebtoken');
+const resetPassEmail = require('../template/resetPasswordEmail');
 
 class AuthController {
   signup = tryCatchDecorator(async (req, res) => {
@@ -70,7 +70,6 @@ class AuthController {
   });
 
   requestPasswordReset = tryCatchDecorator(async (req, res) => {
-    const { BASE_URL } = process.env;
     const { email } = req.body;
     if (!email) throw httpError(400);
 
@@ -90,8 +89,8 @@ class AuthController {
 
     const data = {
       to: email,
-      subject: 'Verify Emmail',
-      html: `<a href="${BASE_URL}/api/auth/resetPassword/${newToken}" target="_blank">Click verify email</a>`,
+      subject: 'Скидання паролю',
+      html: resetPassEmail(newToken),
     };
 
     sendEmail(data)
