@@ -1,6 +1,5 @@
 const resetPassEmail = (token = '') => {
   const { BASE_URL } = process.env;
-  console.log(token);
   return `<p class="reset_password">
   Вітаю! З вашої email адреси надійшов запит на зміну паролю в додатку TService,
   якщо це були не ви, то будь ласка проігноруйте даний лист. <br /> Якщо ви дійсно
