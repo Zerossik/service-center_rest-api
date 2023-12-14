@@ -13,7 +13,6 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendEmail = (data = {}) => {
-  console.log(NODEMAILER_FROM_EMAIL, EMAIL_PASS);
   const email = { ...data, from: NODEMAILER_FROM_EMAIL };
   return transporter.sendMail(email);
 };
