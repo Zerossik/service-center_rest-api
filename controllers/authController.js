@@ -1,6 +1,6 @@
 const { User, GoogleModel, TokenModel } = require('../models');
 const { tryCatchDecorator } = require('../decorators');
-const { httpError, createToken, sendEmail } = require('../helper');
+const { httpError, createToken, sendEmail, verifyToken } = require('../helper');
 const bcrypt = require('bcrypt');
 const { nanoid } = require('nanoid');
 const queryString = require('query-string');
@@ -101,7 +101,25 @@ class AuthController {
     res.json({ code: 201, message: 'Your password changed' });
   });
 
+  verifyToken = tryCatchDecorator(async (req, res) => {
+    const { token } = req.params;
+    const isValidToken = verifyToken(token);
+    if (!isValidToken) throw httpError(404);
+    res.status(200);
+    res.json({ code: 200, message: 'Token is valid' });
+  });
+
   resetPassword = tryCatchDecorator(async (req, res) => {
+    const { token } = req.params;
+    const { password = '' } = req.body;
+    const { id } = verifyToken(token);
+    const newUser = await User.findOne({ _id: id });
+    if (!newUser) throw httpError(404);
+
+    const newPass = await bcrypt.hash(password, 10);
+    newUser.password = newPass;
+    newUser.save();
+
     res.status(201);
     res.json({ code: 201, message: 'your password was reseted' });
   });
