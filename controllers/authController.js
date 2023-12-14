@@ -54,7 +54,6 @@ class AuthController {
     if (!veryfyPass) throw httpError(401, 'Email or password is wrong');
 
     const token = createToken(user._id);
-    console.log(token);
 
     await User.findByIdAndUpdate(user._id, { token });
 
@@ -76,16 +75,7 @@ class AuthController {
     const user = await User.findOne({ email });
     if (!user) throw httpError(404, `user ${email} not found`);
 
-    const token = await TokenModel.findOne({ user: user._id });
-    if (token) token.deleteOne();
-
     const newToken = createToken(user._id, '1h');
-
-    await new TokenModel({
-      user: user._id,
-      token: newToken,
-      createdAt: Date.now(),
-    }).save();
 
     const data = {
       to: email,
@@ -97,14 +87,16 @@ class AuthController {
       .then(() => console.log('Email sended'))
       .catch(error => console.log(error.message));
 
-    res.status(201);
-    res.json({ code: 201, message: 'Your password changed' });
+    res.status(204);
+    res.json({ code: 204, message: 'no Content' });
   });
 
   verifyToken = tryCatchDecorator(async (req, res) => {
     const { token } = req.params;
     const isValidToken = verifyToken(token);
+
     if (!isValidToken) throw httpError(404);
+
     res.status(200);
     res.json({ code: 200, message: 'Token is valid' });
   });
@@ -112,7 +104,10 @@ class AuthController {
   resetPassword = tryCatchDecorator(async (req, res) => {
     const { token } = req.params;
     const { password = '' } = req.body;
+
     const { id } = verifyToken(token);
+    if (!id) throw httpError(404);
+
     const newUser = await User.findOne({ _id: id });
     if (!newUser) throw httpError(404);
 
