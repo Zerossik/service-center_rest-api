@@ -7,6 +7,7 @@ const queryString = require('query-string');
 const { URL } = require('url');
 const axios = require('axios');
 const resetPassEmail = require('../template/resetPasswordEmail');
+const crypto = require('crypto');
 
 class AuthController {
   signup = tryCatchDecorator(async (req, res) => {
@@ -75,12 +76,22 @@ class AuthController {
     const user = await User.findOne({ email });
     if (!user) throw httpError(404, `user ${email} not found`);
 
-    const newToken = createToken(user._id, '1h');
+    const token = await TokenModel.findOne({ user: user._id });
+    if (token) token.deleteOne();
+
+    const newToken = crypto.randomBytes(32).toString('hex');
+    const hashToken = await bcrypt.hash(newToken, 10);
+
+    await new TokenModel({
+      user: user._id,
+      token: hashToken,
+      createdAt: Date.now(),
+    }).save();
 
     const data = {
       to: email,
       subject: 'Скидання паролю',
-      html: resetPassEmail(newToken),
+      html: resetPassEmail(newToken, user._id),
     };
 
     sendEmail(data)
@@ -92,9 +103,13 @@ class AuthController {
   });
 
   verifyToken = tryCatchDecorator(async (req, res) => {
-    const { token } = req.params;
-    const isValidToken = verifyToken(token);
+    const { token: resetToken, id } = req.body;
+    if (!(resetToken && id)) throw httpError(400);
 
+    const { token } = await TokenModel.findOne({ user: id });
+    if (!token) throw httpError(404);
+
+    const isValidToken = await bcrypt.compare(resetToken, token);
     if (!isValidToken) throw httpError(404);
 
     res.status(200);
@@ -102,21 +117,17 @@ class AuthController {
   });
 
   resetPassword = tryCatchDecorator(async (req, res) => {
-    const { token } = req.params;
-    const { password = '' } = req.body;
-
-    const { id } = verifyToken(token);
-    if (!id) throw httpError(404);
-
-    const newUser = await User.findOne({ _id: id });
-    if (!newUser) throw httpError(404);
-
-    const newPass = await bcrypt.hash(password, 10);
-    newUser.password = newPass;
-    newUser.save();
-
-    res.status(201);
-    res.json({ code: 201, message: 'your password was reseted' });
+    // const { token } = req.params;
+    // const { password = '' } = req.body;
+    // const { id } = verifyToken(token);
+    // if (!id) throw httpError(404);
+    // const newUser = await User.findOne({ _id: id });
+    // if (!newUser) throw httpError(404);
+    // const newPass = await bcrypt.hash(password, 10);
+    // newUser.password = newPass;
+    // newUser.save();
+    // res.status(201);
+    // res.json({ code: 201, message: 'your password was reseted' });
   });
 
   loguot = tryCatchDecorator(async (req, res) => {
