@@ -40,8 +40,31 @@ headers{
 }
 ```
 ___
+## Reset password
 ___
-
+### `POST https://service-center-6fck.onrender.com/api/auth/resetpassword - resetPassword first step`
+Перший запит на скидання паролю. Приймає body з полем `email`
+```json
+"email": "example_email"
+```
+Якщо ви все зробили вірно, то на email користувача буде відправлений лист з подальшою інструкцією.
+___
+### `POST https://service-center-6fck.onrender.com/api/auth/resetpassword/verify - resetPassword second step`
+Це другий крок, але він не обов'язковий. Цей крок необхідний, якщо ви хочете відображати компонент за умовою, наприклад, якщо токен валідний, то показуйте користувачу форму для введення нового паролю, якщо не валідний, то покажіть помилку! Отримує body з полями `token, id` - token та id вам були відправлені в посиланні на пошту в першому запиті. 
+```json
+"token": "your_token",
+"id": "your_id"
+```
+Якщо ви все зробили вірно, то ви отримаєте відповідь з успіхом або помилкою.
+___
+### `POST https://service-center-6fck.onrender.com/api/auth/resetpassword/:token - resetPassword third step`
+В параметрах запроса приймає `token`, а в body приймає `password, id`.
+```json
+"password": "your new password",
+"id": "your id"
+```
+Якщо ви все зробили вірно, то пароль успішно буде замінено на новий, а користувач отримає на пошту email. 
+___   
 ## Contacts
 ____
 ### `GET https://service-center-6fck.onrender.com/api/contacts - get all contacts`
