@@ -8,10 +8,10 @@ class UserController {
     const { theme } = req.body;
     if (!theme) httpError(400);
 
-    await User.findByIdAndUpdate(userID, { theme }, { new: true });
+    const data = await User.findByIdAndUpdate(userID, { theme }, { new: true });
 
     res.status(201);
-    res.json({ code: 201, message: 'Theme changed' });
+    res.json({ code: 201, data: { theme: data.theme } });
   });
 }
 
