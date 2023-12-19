@@ -41,6 +41,7 @@ const userSchema = new Schema(
       required: [true, 'Verify token is required'],
     },
     theme: { type: String, default: 'light' },
+    masters: { type: Array, default: [] },
   },
   { versionKey: false, timestamps: true }
 ); // Схема user для моделі MongoDB
