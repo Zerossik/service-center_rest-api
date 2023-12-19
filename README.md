@@ -146,3 +146,18 @@ ___
 ```json
 "theme": "light or dark"
 ```
+Повертає нову тему!
+___
+### `POST https://service-center-6fck.onrender.com/api/user/addMaster - add the name master to the database`
+Запит на додавання Ім'я майстра в базу. Отримує body з полем `master`
+```json
+"master": "master name"
+```
+Якщо все успішно, сервер поверне 201 код та повідомлення, що майстер доданий! Інакше поверне помилку.
+___
+### `DELETE https://service-center-6fck.onrender.com/api/user/deleteMaster - delete master from the database`
+Запит на видалення майстра з бази. Отримує body з полем `master`
+```json
+"master": "master name"
+```
+Якщо все успішно, сервер поверне 200 код та повідомлення, що майстер був видалений! Інакше поверне помилку.
