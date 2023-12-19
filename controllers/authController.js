@@ -165,6 +165,7 @@ class AuthController {
         name: user.name,
         email: user.email,
         theme: user.theme,
+        masters: user.masters,
       },
     });
   });

@@ -5,7 +5,6 @@ const fs = require('fs');
 const path = require('path');
 const { authRouter, contactsRouter, userRouter } = require('./routes/api/');
 const { errorHandler } = require('./middleware');
-const { homePageController } = require('./controllers');
 const { isAuthenticated } = require('./middleware');
 
 const app = express();
@@ -19,7 +18,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 
-app.get('/', homePageController);
 app.use('/api/auth', authRouter);
 app.use('/api/contacts', contactsRouter);
 app.use('/api/user', isAuthenticated, userRouter);
