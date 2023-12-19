@@ -1,6 +1,6 @@
 # service-center_rest-api
 ____
-## Authorization
+## AUTHORIZATION
 ____
 ### `POST https://service-center-6fck.onrender.com/api/auth/signup - create user!`
 Отримує body у форматі (поля name, email, password обов'язкові з валідацією):
@@ -40,7 +40,7 @@ headers{
 }
 ```
 ___
-## Reset password
+## Reset_password
 ___
 ### `POST https://service-center-6fck.onrender.com/api/auth/resetpassword - resetPassword first step`
 Перший запит на скидання паролю. Приймає body з полем `email`
@@ -65,7 +65,7 @@ ___
 ```
 Якщо ви все зробили вірно, то пароль успішно буде замінено на новий, а користувач отримає на пошту email. 
 ___   
-## Contacts
+## CONTACTS
 ____
 ### `GET https://service-center-6fck.onrender.com/api/contacts - get all contacts`
 Необхідно передати в headers поле `'Authorization': 'Bearer token'`
@@ -139,3 +139,10 @@ headers{
 Необхідно передати параметр **id**. Body не отримує.  
 Видаляє контакт за його ID
 ___
+### USER
+___
+### `POST https://service-center-6fck.onrender.com/api/user/changeTheme - changeTheme`
+Запит на зміну теми. Отримує body з полем `theme`
+```json
+"theme": "light or dark"
+```
