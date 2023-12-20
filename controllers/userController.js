@@ -1,3 +1,4 @@
+const { customAlphabet } = require('nanoid');
 const { tryCatchDecorator } = require('../decorators');
 const { httpError } = require('../helper');
 const { User } = require('../models');
@@ -15,29 +16,37 @@ class UserController {
   });
 
   addMaster = tryCatchDecorator(async (req, res) => {
-    const { master } = req.body;
+    const { firstName, lastName } = req.body;
     const { user } = req;
-    if (!master) throw httpError(400, 'Bad Request, master is required');
+    if (!(firstName && lastName))
+      throw httpError(400, 'Bad Request, firstName and lastName is required');
+    const nanoid = customAlphabet('1234567890qwert', 12);
+    const newMaster = {
+      id: nanoid(),
+      firstName,
+      lastName,
+    };
 
-    user.masters = [...user.masters, master];
+    user.masters = [...user.masters, newMaster];
     user.save();
 
     res.status(201);
-    res.json({ code: 201, message: `master ${master} was added` });
+    res.json({ code: 201, data: newMaster });
   });
 
   deleteMaster = tryCatchDecorator(async (req, res) => {
     const { user } = req;
-    const { master } = req.body;
-    if (!master) throw httpError(400, 'Bad Request, master is required');
-    if (!user.masters.includes(master))
-      throw httpError(404, `master ${master} Not Found`);
+    const { id } = req.body;
+    if (!id) throw httpError(400, 'Bad Request, master id is required');
 
-    user.masters = user.masters.filter(el => el !== master);
+    const deletedUser = user.masters.find(({ id: userID }) => userID === id);
+    if (!deletedUser) throw httpError(404, `master with id - ${id} Not Found`);
+
+    user.masters = user.masters.filter(({ id: userID }) => userID !== id);
     user.save();
 
     res.status(200);
-    res.json({ code: 200, message: `master ${master} was deleted` });
+    res.json({ code: 200, data: deletedUser });
   });
 }
 
