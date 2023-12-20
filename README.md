@@ -149,15 +149,16 @@ ___
 Повертає нову тему!
 ___
 ### `POST https://service-center-6fck.onrender.com/api/user/addMaster - add the name master to the database`
-Запит на додавання Ім'я майстра в базу. Отримує body з полем `master`
+Запит на додавання майстра в базу. Отримує body з полем `firstName lastName`
 ```json
-"master": "master name"
+"firstName": "your firstName",
+"lastName": "your lastName"
 ```
-Якщо все успішно, сервер поверне 201 код та повідомлення, що майстер доданий! Інакше поверне помилку.
+Якщо все успішно, сервер поверне 201 код та об'єкт з доданим майстром! Інакше поверне помилку.
 ___
 ### `DELETE https://service-center-6fck.onrender.com/api/user/deleteMaster - delete master from the database`
-Запит на видалення майстра з бази. Отримує body з полем `master`
+Запит на видалення майстра з бази. Отримує body з полем `id`
 ```json
-"master": "master name"
+"id": "example_id"
 ```
-Якщо все успішно, сервер поверне 200 код та повідомлення, що майстер був видалений! Інакше поверне помилку.
+Якщо все успішно, сервер поверне 200 код та об'єкт з видаленим майстром! Інакше поверне помилку.
