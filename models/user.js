@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose');
 const joi = require('joi');
+const { firstLetterUpperCase } = require('../helper');
 
 const joiUserSchemaSignUp = joi.object({
   name: joi.string().required(),
@@ -45,6 +46,12 @@ const userSchema = new Schema(
   },
   { versionKey: false, timestamps: true }
 ); // Схема user для моделі MongoDB
+
+userSchema.pre('save', function (next) {
+  this.name = firstLetterUpperCase(this.name);
+  this.email = firstLetterUpperCase(this.email);
+  next();
+});
 
 const User = model('user', userSchema);
 

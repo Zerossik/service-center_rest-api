@@ -1,6 +1,11 @@
 const { User, GoogleModel, TokenModel } = require('../models');
 const { tryCatchDecorator } = require('../decorators');
-const { httpError, createToken, sendEmail, verifyToken } = require('../helper');
+const {
+  httpError,
+  createToken,
+  sendEmail,
+  firstLetterUpperCase,
+} = require('../helper');
 const bcrypt = require('bcrypt');
 const { nanoid } = require('nanoid');
 const queryString = require('query-string');
@@ -44,7 +49,7 @@ class AuthController {
 
     if (!email || !password) throw httpError(400, 'Bad Request');
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: firstLetterUpperCase(email) });
 
     if (!user || !user.password)
       throw httpError(401, 'Email or password is wrong');
@@ -73,7 +78,7 @@ class AuthController {
     const { email } = req.body;
     if (!email) throw httpError(400);
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: firstLetterUpperCase(email) });
     if (!user) throw httpError(404, `user ${email} not found`);
 
     const token = await TokenModel.findOne({ user: user._id });
@@ -220,10 +225,15 @@ class AuthController {
 
     const { email, name } = userData.data;
 
-    const user = await GoogleModel.findOne({ email });
+    const user = await GoogleModel.findOne({
+      email: firstLetterUpperCase(email),
+    });
 
     if (!user) {
-      const newUser = { email, name };
+      const newUser = {
+        email: firstLetterUpperCase(email),
+        name: firstLetterUpperCase(name),
+      };
       const createdUser = await GoogleModel.create({
         ...newUser,
       });
