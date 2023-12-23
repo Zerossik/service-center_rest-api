@@ -1,6 +1,11 @@
 const { User, GoogleModel, TokenModel } = require('../models');
 const { tryCatchDecorator } = require('../decorators');
-const { httpError, createToken, sendEmail, verifyToken } = require('../helper');
+const {
+  httpError,
+  createToken,
+  sendEmail,
+  firstLetterUpperCase,
+} = require('../helper');
 const bcrypt = require('bcrypt');
 const { nanoid } = require('nanoid');
 const queryString = require('query-string');
