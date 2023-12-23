@@ -1,6 +1,6 @@
 const { customAlphabet } = require('nanoid');
 const { tryCatchDecorator } = require('../decorators');
-const { httpError } = require('../helper');
+const { httpError, firstLetterUpperCase } = require('../helper');
 const { User } = require('../models');
 
 class UserController {
@@ -23,8 +23,8 @@ class UserController {
     const nanoid = customAlphabet('1234567890qwert', 12);
     const newMaster = {
       id: nanoid(),
-      firstName,
-      lastName,
+      firstName: firstLetterUpperCase(firstName),
+      lastName: firstLetterUpperCase(lastName),
     };
 
     user.masters = [...user.masters, newMaster];
@@ -39,14 +39,15 @@ class UserController {
     const { id } = req.body;
     if (!id) throw httpError(400, 'Bad Request, master id is required');
 
-    const deletedUser = user.masters.find(({ id: userID }) => userID === id);
-    if (!deletedUser) throw httpError(404, `master with id - ${id} Not Found`);
+    const deletedMaster = user.masters.find(({ id: userID }) => userID === id);
+    if (!deletedMaster)
+      throw httpError(404, `master with id - ${id} Not Found`);
 
     user.masters = user.masters.filter(({ id: userID }) => userID !== id);
     user.save();
 
     res.status(200);
-    res.json({ code: 200, data: deletedUser });
+    res.json({ code: 200, data: deletedMaster });
   });
 }
 
