@@ -49,7 +49,7 @@ const userSchema = new Schema(
 
 userSchema.pre('save', function (next) {
   this.name = firstLetterUpperCase(this.name);
-  this.email = firstLetterUpperCase(this.email);
+  this.email = this.email.toLowerCase();
   next();
 });
 
