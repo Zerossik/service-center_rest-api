@@ -1,4 +1,4 @@
-const { Schema, model: newModel, Types } = require('mongoose');
+const { Schema, model: newModel } = require('mongoose');
 const joi = require('joi');
 
 const joiContactSchema = joi.object({
@@ -16,12 +16,6 @@ const joiContactSchema = joi.object({
   description: joi.string(),
   failure: joi.string().required(),
 });
-
-const CounterSchema = new Schema({
-  _id: { type: String, required: true },
-  sequence_value: { type: Number, default: 0 },
-});
-const Counter = newModel('counter', CounterSchema);
 
 const contactSchema = new Schema({
   orderNumber: {
@@ -46,23 +40,6 @@ const contactSchema = new Schema({
   description: { type: String },
   failure: { type: String, required: [true, 'failure is required'] }, // несправність
 });
-
-// contactSchema.pre('save', async function (next) {
-//   try {
-//     const doc = this;
-
-//     const counter = await Counter.findByIdAndUpdate(
-//       { _id: 'contactsSequence' },
-//       { $inc: { sequence_value: 1 } },
-//       { new: true, upsert: true }
-//     );
-//     if (!counter) next(error);
-//     doc.orderNumber = counter.sequence_value;
-//     next();
-//   } catch (error) {
-//     next(error);
-//   }
-// });
 
 const Contacts = newModel('contacts', contactSchema);
 

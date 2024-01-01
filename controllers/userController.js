@@ -1,7 +1,7 @@
 const { customAlphabet } = require('nanoid');
 const { tryCatchDecorator } = require('../decorators');
 const { httpError, firstLetterUpperCase } = require('../helper');
-const { User } = require('../models');
+const { User, DevSetModel } = require('../models');
 
 class UserController {
   changeTheme = tryCatchDecorator(async (req, res) => {
@@ -48,6 +48,45 @@ class UserController {
 
     res.status(200);
     res.json({ code: 200, data: deletedMaster });
+  });
+
+  addDevSet = tryCatchDecorator(async (req, res) => {
+    const { type, manufacturer } = req.body;
+    const trimedType = typeof type === 'string' ? type.trim() : undefined;
+    const trimedManufacturer =
+      typeof manufacturer === 'string' ? manufacturer.trim() : undefined;
+    const { _id: id } = req.user;
+
+    if (!(trimedType || trimedManufacturer)) throw httpError(400);
+
+    const user = await DevSetModel.findOne({ owner: id });
+    if (!user) {
+      const newUser = new DevSetModel({
+        owner: id,
+      });
+      if (trimedType) {
+        newUser.deviceTypes = [firstLetterUpperCase(trimedType)];
+      }
+      if (trimedManufacturer) {
+        newUser.deviceManufacturers = [
+          firstLetterUpperCase(trimedManufacturer),
+        ];
+      }
+      newUser.save();
+      console.log('User settings created');
+      res.status(201);
+      res.json({
+        code: 201,
+        data: {
+          deviceTypes: newUser.deviceTypes,
+          deviceManufacturers: newUser.deviceManufacturers,
+        },
+      });
+      return;
+    }
+    console.log('Конец Контроллера');
+    res.status(201);
+    res.json({ code: 201, message: 'OK' });
   });
 }
 
