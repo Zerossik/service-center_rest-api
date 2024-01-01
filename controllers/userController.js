@@ -72,21 +72,54 @@ class UserController {
           firstLetterUpperCase(trimedManufacturer),
         ];
       }
-      newUser.save();
-      console.log('User settings created');
+
+      await newUser.save();
+
       res.status(201);
       res.json({
         code: 201,
+        message: 'User settings created',
         data: {
           deviceTypes: newUser.deviceTypes,
           deviceManufacturers: newUser.deviceManufacturers,
         },
       });
       return;
+    } else {
+      if (
+        trimedType &&
+        !user.deviceTypes.includes(firstLetterUpperCase(trimedType))
+      ) {
+        console.log('added deviceType');
+        user.deviceTypes = [
+          ...user.deviceTypes,
+          firstLetterUpperCase(trimedType),
+        ];
+      }
+      if (
+        trimedManufacturer &&
+        !user.deviceManufacturers.includes(
+          firstLetterUpperCase(trimedManufacturer)
+        )
+      ) {
+        console.log('added deviceManufacturer');
+        user.deviceManufacturers = [
+          ...user.deviceManufacturers,
+          firstLetterUpperCase(trimedManufacturer),
+        ];
+      }
+      await user.save();
+      res.status(201);
+      res.json({
+        code: 201,
+        message: `user settings have been updated`,
+        data: {
+          deviceTypes: user.deviceTypes,
+          deviceManufacturers: user.deviceManufacturers,
+        },
+      });
+      return;
     }
-    console.log('Конец Контроллера');
-    res.status(201);
-    res.json({ code: 201, message: 'OK' });
   });
 }
 
