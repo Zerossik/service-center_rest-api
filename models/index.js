@@ -9,4 +9,5 @@ module.exports = {
   GoogleModel: require('./googleModel'),
   Contacts,
   joiContactSchema,
+  DevSetModel: require('./deviceSettings'),
 };
