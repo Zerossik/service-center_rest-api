@@ -46,7 +46,7 @@ class UserController {
     await user.save(); // Зберію майстра в базу!
 
     res.status(201);
-    res.json({ code: 201, data: user.masters });
+    res.json({ code: 201, data: newMaster });
   });
 
   deleteMaster = tryCatchDecorator(async (req, res) => {
