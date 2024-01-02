@@ -162,3 +162,16 @@ ___
 "id": "example_id"
 ```
 Якщо все успішно, сервер поверне 200 код та об'єкт з видаленим майстром! Інакше поверне помилку.
+___
+### `GET https://service-center-6fck.onrender.com/api/user/deviceSettings - get deviceTypes and Manufacturers`
+ГЕТ запит за списком `deviceTypes та Manufacturers`
+___
+### `POST https://service-center-6fck.onrender.com/api/user/deviceSettings - add deviceTypes or Manufacturers`
+ПОСТ запит для додавання `deviceType або Manufacturer` в залежності від того, що передасте в body.   
+body приймає `type або manufacturer або те й те`. 
+```json
+"type": "your deviceType String",
+"manufacturer": "your manufacturer String"
+```
+В залежності що передасте, сервер оновить списки та поверну вам оновлені списки данних.
+___
