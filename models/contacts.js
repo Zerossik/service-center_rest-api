@@ -31,7 +31,7 @@ const contactSchema = new Schema({
   price: { type: Number, default: 0 },
   status: {
     type: String,
-    default: 'accepted',
+    default: 'Прийнято',
   },
   masterName: { type: String, default: '' },
   startDate: { type: Date, default: Date.now },

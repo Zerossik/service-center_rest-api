@@ -1,4 +1,3 @@
-const { customAlphabet } = require('nanoid');
 const { tryCatchDecorator } = require('../decorators');
 const { httpError, firstLetterUpperCase } = require('../helper');
 const { User, DevSetModel } = require('../models');
@@ -17,59 +16,98 @@ class UserController {
 
   addMaster = tryCatchDecorator(async (req, res) => {
     const { firstName, lastName } = req.body;
+    //Створюю Ім'я користувача без пробілів та роблю Ім'я з великої літери
+    const trimedFirstName =
+      typeof firstName === 'string'
+        ? firstLetterUpperCase(firstName.trim())
+        : undefined;
+    //Створюю Прізвище користувача без пробілів та роблю Прізвище з великої літери
+    const trimedLastName =
+      typeof lastName === 'string'
+        ? firstLetterUpperCase(lastName.trim())
+        : undefined;
     const { user } = req;
-    if (!(firstName && lastName))
+    // якщо не передали Ім'я та Прізвище - викидаю помилку!
+    if (!(trimedFirstName && trimedLastName))
       throw httpError(400, 'Bad Request, firstName and lastName is required');
-    const nanoid = customAlphabet('1234567890qwert', 12);
+    // Перевіряю, чи є вже майтер з таким Ім'ям та Прізвищем, якщо є - викидаю помилку 409
+    const isMaster = user.masters.some(
+      ({ firstName, lastName }) =>
+        firstName === trimedFirstName && lastName === trimedLastName
+    );
+    if (isMaster) throw httpError(409);
+    // Створюю об'єкт з номим майстром.
     const newMaster = {
-      id: nanoid(),
-      firstName: firstLetterUpperCase(firstName),
-      lastName: firstLetterUpperCase(lastName),
+      firstName: trimedFirstName,
+      lastName: trimedLastName,
     };
 
     user.masters = [...user.masters, newMaster];
-    user.save();
+    await user.save(); // Зберію майстра в базу!
 
     res.status(201);
-    res.json({ code: 201, data: newMaster });
+    res.json({ code: 201, data: user.masters });
   });
 
   deleteMaster = tryCatchDecorator(async (req, res) => {
     const { user } = req;
     const { id } = req.body;
-    if (!id) throw httpError(400, 'Bad Request, master id is required');
+    if (!id) throw httpError(400, 'Bad Request, master id is required'); // якщо не передали id - Викидаю помилку
 
-    const deletedMaster = user.masters.find(({ id: userID }) => userID === id);
+    const deletedMaster = user.masters.find(
+      ({ _id: userID }) => userID.toString() === id
+    ); // Перевіряю, чи є майстр з таким id в базі, якщо немає - викидаю помилку 404
+
     if (!deletedMaster)
       throw httpError(404, `master with id - ${id} Not Found`);
 
-    user.masters = user.masters.filter(({ id: userID }) => userID !== id);
-    user.save();
+    user.masters = user.masters.filter(
+      ({ _id: userID }) => userID.toString() !== id
+    ); // Видаляю майстра по id, який передали в body
+    await user.save(); // зберігаю в базі
 
     res.status(200);
     res.json({ code: 200, data: deletedMaster });
   });
-
+  getDevSet = tryCatchDecorator(async (req, res) => {
+    const { _id: id } = req.user;
+    const data = await DevSetModel.findOne({ owner: id });
+    if (!data) throw httpError(404);
+    res.status(200);
+    res.json({
+      code: 200,
+      data: {
+        deviceTypes: data.deviceTypes,
+        deviceManufacturers: data.deviceManufacturers,
+      },
+    });
+  });
   addDevSet = tryCatchDecorator(async (req, res) => {
     const { type, manufacturer } = req.body;
-    const trimedType = typeof type === 'string' ? type.trim() : undefined;
+    const trimedType =
+      typeof type === 'string' ? firstLetterUpperCase(type.trim()) : undefined; // Роблю type з великої літери та без пробілів.
     const trimedManufacturer =
-      typeof manufacturer === 'string' ? manufacturer.trim() : undefined;
+      typeof manufacturer === 'string'
+        ? firstLetterUpperCase(manufacturer.trim())
+        : undefined; // роблю manufacturer з великої літери та без пробілів
     const { _id: id } = req.user;
 
-    if (!(trimedType || trimedManufacturer)) throw httpError(400);
+    if (!(trimedType || trimedManufacturer)) throw httpError(400); // перевіряю, чи передали type або manufacturer, якщо ні - викидаю помилку
 
-    const user = await DevSetModel.findOne({ owner: id });
+    const user = await DevSetModel.findOne({ owner: id }); // шукаю користувача по id
+    // якщо юзера нема, то створюєм юзера + записуєм йому данні, які передалі в body, якщо юзер є, то просто оновлюємо необхідні данні.
     if (!user) {
       const newUser = new DevSetModel({
         owner: id,
       });
       if (trimedType) {
-        newUser.deviceTypes = [firstLetterUpperCase(trimedType)];
+        newUser.deviceTypes = [{ deviceType: trimedType }];
       }
       if (trimedManufacturer) {
         newUser.deviceManufacturers = [
-          firstLetterUpperCase(trimedManufacturer),
+          {
+            manufacturer: trimedManufacturer,
+          },
         ];
       }
 
@@ -86,26 +124,22 @@ class UserController {
       });
       return;
     } else {
-      if (
-        trimedType &&
-        !user.deviceTypes.includes(firstLetterUpperCase(trimedType))
-      ) {
+      const isDevType = user.deviceTypes.some(
+        ({ deviceType }) => deviceType === trimedType
+      );
+      const isManufacturer = user.deviceManufacturers.some(
+        ({ manufacturer }) => manufacturer === trimedManufacturer
+      );
+
+      if (trimedType && !isDevType) {
         console.log('added deviceType');
-        user.deviceTypes = [
-          ...user.deviceTypes,
-          firstLetterUpperCase(trimedType),
-        ];
+        user.deviceTypes = [...user.deviceTypes, { deviceType: trimedType }];
       }
-      if (
-        trimedManufacturer &&
-        !user.deviceManufacturers.includes(
-          firstLetterUpperCase(trimedManufacturer)
-        )
-      ) {
+      if (trimedManufacturer && !isManufacturer) {
         console.log('added deviceManufacturer');
         user.deviceManufacturers = [
           ...user.deviceManufacturers,
-          firstLetterUpperCase(trimedManufacturer),
+          { manufacturer: trimedManufacturer },
         ];
       }
       await user.save();

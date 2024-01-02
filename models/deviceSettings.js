@@ -7,11 +7,11 @@ const deviceSettingsSchema = new Schema({
     required: [true, 'User ID is requires'],
   },
   deviceTypes: {
-    type: [String],
+    type: [{ id: Schema.Types.ObjectId, deviceType: String }],
     default: [],
   },
   deviceManufacturers: {
-    type: [String],
+    type: [{ id: Schema.Types.ObjectId, manufacturer: String }],
     default: [],
   },
 });
