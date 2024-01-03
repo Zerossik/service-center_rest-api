@@ -173,8 +173,7 @@ ___
 ```
 Якщо все успішно, сервер поверне останній доданий deviceType.
 ___
-### `POST https://service-center-6fck.onrender.com/api/user/deviceSettingsManufacturer`      
-###  add deviceManufacturer
+### `POST https://service-center-6fck.onrender.com/api/user/deviceSettingsManufacturer - add deviceManufacturer` 
 ПОСТ запит для додавання `deviceManufacturer`, body отримує поле `manufacturer`. 
 ```json
 "manufacturer": "your manufacturer String"
