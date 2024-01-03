@@ -166,12 +166,17 @@ ___
 ### `GET https://service-center-6fck.onrender.com/api/user/deviceSettings - get deviceTypes and Manufacturers`
 ГЕТ запит за списком `deviceTypes та Manufacturers`
 ___
-### `POST https://service-center-6fck.onrender.com/api/user/deviceSettings - add deviceTypes or Manufacturers`
-ПОСТ запит для додавання `deviceType або Manufacturer` в залежності від того, що передасте в body.   
-body приймає `type або manufacturer або те й те`. 
+### `POST https://service-center-6fck.onrender.com/api/user/deviceSettingsType - add deviceType`
+ПОСТ запит для додавання `deviceType`, body отримує поле `type`. 
 ```json
-"type": "your deviceType String",
+"type": "your deviceType String"
+```
+Якщо все успішно, сервер поверне останній доданий deviceType.
+___
+### `POST https://service-center-6fck.onrender.com/api/user/deviceSettingsManufacturer - add deviceManufacturer`
+ПОСТ запит для додавання `deviceManufacturer`, body отримує поле `manufacturer`. 
+```json
 "manufacturer": "your manufacturer String"
 ```
-В залежності що передасте, сервер оновить списки та поверну вам оновлені списки данних.
+Якщо все успішно, сервер поверне останній доданий deviceManufacturer.
 ___
