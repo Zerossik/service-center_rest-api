@@ -77,83 +77,99 @@ class UserController {
     res.json({
       code: 200,
       data: {
-        deviceTypes: data.deviceTypes,
-        deviceManufacturers: data.deviceManufacturers,
+        deviceTypes: data.deviceTypes.length > 0 ? data.deviceTypes : null,
+        deviceManufacturers:
+          data.deviceManufacturers.length > 0 ? data.deviceManufacturers : null,
       },
     });
   });
-  addDevSet = tryCatchDecorator(async (req, res) => {
-    const { type, manufacturer } = req.body;
+
+  addDevType = tryCatchDecorator(async (req, res) => {
+    const { type } = req.body;
     const trimedType =
       typeof type === 'string' ? firstLetterUpperCase(type.trim()) : undefined; // Роблю type з великої літери та без пробілів.
+    const { _id: id } = req.user;
+
+    if (!trimedType) throw httpError(400, 'Bad Request, type is required'); // перевіряю, чи передали type, якщо ні - викидаю помилку
+
+    const user = await DevSetModel.findOne({ owner: id }); // шукаю користувача по id, якщо користувача не існує, то створюю.
+    if (!user) {
+      const newUser = new DevSetModel({
+        owner: id,
+        deviceTypes: [{ deviceType: trimedType }],
+      });
+      await newUser.save();
+      res.status(201);
+      res.json({
+        code: 201,
+        message: 'User settings created',
+        data: newUser.deviceTypes[0],
+      });
+      return;
+    }
+    // якщо користувач існує, то я просто оновлюю дані.
+    const isType = user.deviceTypes.some(
+      ({ deviceType }) => deviceType === trimedType
+    ); // перевіряю, чи є вже такий тип в базі чи ні.
+    if (isType) throw httpError(409); // якщо є, викидаю помилку 409
+
+    user.deviceTypes = [...user.deviceTypes, { deviceType: trimedType }];
+    await user.save();
+
+    const typeIndex = user.deviceTypes.length - 1; // отримую останій індекс в массиві, щоб повернути на фронтенд останній доданий тип
+
+    res.status(201);
+    res.json({
+      code: 201,
+      message: `user settings have been updated`,
+      data: user.deviceTypes[typeIndex],
+    });
+  });
+  addDevManufacturer = tryCatchDecorator(async (req, res) => {
+    const { manufacturer } = req.body;
     const trimedManufacturer =
       typeof manufacturer === 'string'
         ? firstLetterUpperCase(manufacturer.trim())
         : undefined; // роблю manufacturer з великої літери та без пробілів
     const { _id: id } = req.user;
 
-    if (!(trimedType || trimedManufacturer)) throw httpError(400); // перевіряю, чи передали type або manufacturer, якщо ні - викидаю помилку
+    if (!trimedManufacturer)
+      throw httpError(400, 'Bad Request, manufacturer is required'); // перевіряю чи передали manufacturer, якщо ні - викидаю помилку 400
 
-    const user = await DevSetModel.findOne({ owner: id }); // шукаю користувача по id
-    // якщо юзера нема, то створюєм юзера + записуєм йому данні, які передалі в body, якщо юзер є, то просто оновлюємо необхідні данні.
+    const user = await DevSetModel.findOne({ owner: id }); // шукаю користувача по id, якщо користувача не існує, то створюю.
     if (!user) {
       const newUser = new DevSetModel({
         owner: id,
+        deviceManufacturers: [{ manufacturer: trimedManufacturer }],
       });
-      if (trimedType) {
-        newUser.deviceTypes = [{ deviceType: trimedType }];
-      }
-      if (trimedManufacturer) {
-        newUser.deviceManufacturers = [
-          {
-            manufacturer: trimedManufacturer,
-          },
-        ];
-      }
-
       await newUser.save();
-
       res.status(201);
       res.json({
         code: 201,
         message: 'User settings created',
-        data: {
-          deviceTypes: newUser.deviceTypes,
-          deviceManufacturers: newUser.deviceManufacturers,
-        },
-      });
-      return;
-    } else {
-      const isDevType = user.deviceTypes.some(
-        ({ deviceType }) => deviceType === trimedType
-      );
-      const isManufacturer = user.deviceManufacturers.some(
-        ({ manufacturer }) => manufacturer === trimedManufacturer
-      );
-
-      if (trimedType && !isDevType) {
-        console.log('added deviceType');
-        user.deviceTypes = [...user.deviceTypes, { deviceType: trimedType }];
-      }
-      if (trimedManufacturer && !isManufacturer) {
-        console.log('added deviceManufacturer');
-        user.deviceManufacturers = [
-          ...user.deviceManufacturers,
-          { manufacturer: trimedManufacturer },
-        ];
-      }
-      await user.save();
-      res.status(201);
-      res.json({
-        code: 201,
-        message: `user settings have been updated`,
-        data: {
-          deviceTypes: user.deviceTypes,
-          deviceManufacturers: user.deviceManufacturers,
-        },
+        data: newUser.deviceManufacturers[0],
       });
       return;
     }
+    const isManufacturer = user.deviceManufacturers.some(
+      ({ manufacturer }) => manufacturer === trimedManufacturer
+    ); // перевіряю, чи є вже такий manufacturer в базі
+
+    if (isManufacturer) throw httpError(409); // якщо є - викидаю помилку
+    //оновлюю та зберігаю manufacturer в базу
+    user.deviceManufacturers = [
+      ...user.deviceManufacturers,
+      { manufacturer: trimedManufacturer },
+    ];
+    await user.save();
+
+    const manufacturerIndex = user.deviceManufacturers.length - 1;
+    res.status(201);
+    res.json({
+      code: 201,
+      message: `user settings have been updated`,
+      data: user.deviceManufacturers[manufacturerIndex],
+    });
   });
 }
 
