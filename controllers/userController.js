@@ -1,6 +1,6 @@
 const { tryCatchDecorator } = require('../decorators');
 const { httpError, firstLetterUpperCase } = require('../helper');
-const { User, DevSetModel } = require('../models');
+const { User, DevSetModel, Contacts } = require('../models');
 
 class UserController {
   changeTheme = tryCatchDecorator(async (req, res) => {
@@ -169,6 +169,50 @@ class UserController {
       code: 201,
       message: `user settings have been updated`,
       data: user.deviceManufacturers[manufacturerIndex],
+    });
+  });
+  devTypeUpdate = tryCatchDecorator(async (req, res) => {
+    const { _id: id } = req.user;
+    const { oldType, newType } = req.body;
+    const trimedOldType =
+      typeof oldType === 'string'
+        ? firstLetterUpperCase(oldType.trim())
+        : undefined;
+
+    const trimedNewType =
+      typeof newType === 'string'
+        ? firstLetterUpperCase(newType.trim())
+        : undefined;
+
+    if (!(trimedOldType && trimedNewType) || trimedOldType === trimedNewType)
+      throw httpError(400, 'expected oldType and newType');
+
+    const isDevType = await DevSetModel.findOne({
+      owner: id,
+      'deviceTypes.deviceType': trimedNewType,
+    }); //перевіряю чи є вже такий тип в базі, якщо є - викидаю помилку
+    if (isDevType) throw httpError(409);
+
+    await Contacts.updateMany(
+      { owner: id, type: trimedOldType },
+      { type: trimedNewType }
+    ); // оновлюю всі типи в коллекції контакти
+
+    const data = await DevSetModel.findOneAndUpdate(
+      {
+        owner: id,
+        'deviceTypes.deviceType': trimedOldType,
+      },
+      { $set: { 'deviceTypes.$.deviceType': trimedNewType } },
+      { new: true }
+    );
+
+    res.status(201);
+    res.json({
+      code: 201,
+      data: data.deviceTypes.find(
+        ({ deviceType }) => deviceType === trimedNewType
+      ),
     });
   });
 }
