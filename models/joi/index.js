@@ -4,4 +4,6 @@ module.exports = {
   changeThemeJoiScheme: require('./changeTheme'),
   addMasterjoiSchema: require('./addMaster'),
   deleteMasterJoiSchema: require('./deleteMaster'),
+  devTypeUpdateJoiSchema: require('./devTypeUpdate'),
+  devManufUpdJoiSchema: require('./devManufacturerUpdate'),
 };
