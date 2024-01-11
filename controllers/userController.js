@@ -187,11 +187,20 @@ class UserController {
     if (!(trimedOldType && trimedNewType) || trimedOldType === trimedNewType)
       throw httpError(400, 'expected oldType and newType');
 
-    const isDevType = await DevSetModel.findOne({
+    const devSet = await DevSetModel.findOne({
       owner: id,
-      'deviceTypes.deviceType': trimedNewType,
-    }); //перевіряю чи є вже такий тип в базі, якщо є - викидаю помилку
-    if (isDevType) throw httpError(409);
+    });
+
+    const isOldType = devSet.deviceTypes.some(
+      ({ deviceType }) => deviceType === trimedOldType
+    ); // Перевіряю, чи існує в базі старий тип, який хочуть оновити, якщо його нема, то викидаю помилку, так як не можна оновити те, чого не існує!
+
+    if (!isOldType) throw httpError(404);
+
+    const isNewType = devSet.deviceTypes.some(
+      ({ deviceType }) => deviceType === trimedNewType
+    ); // Перевіряю, чи існує новий тип в базі, якщо існує, викидаю помилку, так як дублікати не потрібні!
+    if (isNewType) throw httpError(409);
 
     await Contacts.updateMany(
       { owner: id, type: trimedOldType },
@@ -205,13 +214,70 @@ class UserController {
       },
       { $set: { 'deviceTypes.$.deviceType': trimedNewType } },
       { new: true }
-    );
+    ); // Оновлюю старий тип на новий
+    if (!data) throw httpError(404);
 
     res.status(201);
     res.json({
       code: 201,
       data: data.deviceTypes.find(
         ({ deviceType }) => deviceType === trimedNewType
+      ),
+    });
+  });
+  devManufacturerUpdate = tryCatchDecorator(async (req, res) => {
+    const { _id: id } = req.user;
+    const { oldManufacturer, newManufacturer } = req.body;
+    const trimedOldManufacturer =
+      typeof oldManufacturer === 'string'
+        ? firstLetterUpperCase(oldManufacturer.trim())
+        : undefined;
+
+    const trimedNewManufacturer =
+      typeof newManufacturer === 'string'
+        ? firstLetterUpperCase(newManufacturer.trim())
+        : undefined;
+
+    if (
+      !(trimedOldManufacturer && trimedNewManufacturer) ||
+      trimedOldManufacturer === trimedNewManufacturer
+    )
+      throw httpError(400, 'expected oldManufacturer and newManufacturer');
+
+    const devSet = await DevSetModel.findOne({
+      owner: id,
+    });
+
+    const isOldManufacturer = devSet.deviceManufacturers.some(
+      ({ manufacturer }) => manufacturer === trimedOldManufacturer
+    ); // Перевіряю, чи існує в базі старий виробник, який хочуть оновити, якщо такого нема, викидаю помилку. Не можна оновити те, чого не існує!
+    if (!isOldManufacturer) throw httpError(404);
+
+    const isNewManufacturer = devSet.deviceManufacturers.some(
+      ({ manufacturer }) => manufacturer === trimedNewManufacturer
+    ); // Перевіряю, чи є новий виробник в базі, якщо є, то викидаю помилку. Необхідно уникнути дублікату!
+    if (isNewManufacturer) throw httpError(409);
+
+    await Contacts.updateMany(
+      { owner: id, manufacturer: trimedOldManufacturer },
+      { manufacturer: trimedNewManufacturer }
+    ); // оновлюю всі manufacturers в коллекції контакти
+
+    const data = await DevSetModel.findOneAndUpdate(
+      {
+        owner: id,
+        'deviceManufacturers.manufacturer': trimedOldManufacturer,
+      },
+      { $set: { 'deviceManufacturers.$.manufacturer': trimedNewManufacturer } },
+      { new: true }
+    ); // Оновлюю старий виробник на новий!
+    if (!data) throw httpError(404);
+
+    res.status(201);
+    res.json({
+      code: 201,
+      data: data.deviceManufacturers.find(
+        ({ manufacturer }) => manufacturer === trimedNewManufacturer
       ),
     });
   });

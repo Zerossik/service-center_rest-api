@@ -35,7 +35,11 @@ userRouter.post(
   validateBody(addDevSetManufacturerJoiSchema),
   UserController.addDevManufacturer
 );
-userRouter.post('/deviceTypeUpdate', UserController.devTypeUpdate);
+userRouter.patch('/deviceTypeUpdate', UserController.devTypeUpdate);
+userRouter.patch(
+  '/deviceManufacturerUpdate',
+  UserController.devManufacturerUpdate
+);
 
 userRouter.get('/deviceSettings', UserController.getDevSet);
 module.exports = userRouter;
