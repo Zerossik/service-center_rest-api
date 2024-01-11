@@ -1,3 +1,4 @@
+const { valid } = require('joi');
 const { UserController } = require('../../controllers');
 const { isAuthenticated, validateBody } = require('../../middleware');
 const {
@@ -6,6 +7,8 @@ const {
   changeThemeJoiScheme,
   addMasterjoiSchema,
   deleteMasterJoiSchema,
+  devTypeUpdateJoiSchema,
+  devManufUpdJoiSchema,
 } = require('../../models/joi');
 
 const userRouter = require('express').Router();
@@ -35,9 +38,14 @@ userRouter.post(
   validateBody(addDevSetManufacturerJoiSchema),
   UserController.addDevManufacturer
 );
-userRouter.patch('/deviceTypeUpdate', UserController.devTypeUpdate);
+userRouter.patch(
+  '/deviceTypeUpdate',
+  validateBody(devTypeUpdateJoiSchema),
+  UserController.devTypeUpdate
+);
 userRouter.patch(
   '/deviceManufacturerUpdate',
+  validateBody(devManufUpdJoiSchema),
   UserController.devManufacturerUpdate
 );
 
