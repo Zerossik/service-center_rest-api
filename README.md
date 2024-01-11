@@ -169,14 +169,31 @@ ___
 ### `POST https://service-center-6fck.onrender.com/api/user/deviceSettingsType - add deviceType`
 ПОСТ запит для додавання `deviceType`, body отримує поле `type`. 
 ```json
-"type": "your deviceType String"
+"type": "your deviceType: String"
 ```
 Якщо все успішно, сервер поверне останній доданий deviceType.
 ___
 ### `POST https://service-center-6fck.onrender.com/api/user/deviceSettingsManufacturer - add deviceManufacturer` 
 ПОСТ запит для додавання `deviceManufacturer`, body отримує поле `manufacturer`. 
 ```json
-"manufacturer": "your manufacturer String"
+"manufacturer": "your manufacturer: String"
 ```
 Якщо все успішно, сервер поверне останній доданий deviceManufacturer.
 ___
+### `PATCH https://service-center-6fck.onrender.com/api/user/deviceTypeUpdate - update deviceType`
+Запит на оновлення типу техніки, отримує body с полями `oldType, newType`   
+```json
+"oldType": "The type you want to update: String",
+"newType": "The new type: String"
+```
+При успішному оновленні сервер поверне оновлений тип техніки.
+___
+### `PATCH https://service-center-6fck.onrender.com/api/user/deviceManufacturerUpdate - update manufacturer`
+Запит на оновлення виробника, отримує body с полями `oldManufacturer, newManufacturer`   
+```json
+"oldManufacturer": "The manufacturer you want to update: String",
+"newManufacturer": "The new manufacturer: String"
+```
+При успішному оновленні сервер поверне оновленого виробника.
+___
+
