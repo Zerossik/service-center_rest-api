@@ -2,7 +2,7 @@ const { UserController } = require('../../controllers');
 const { isAuthenticated, validateBody } = require('../../middleware');
 const {
   devSetTypeJoiSchema,
-  addDevSetManufacturerJoiSchema,
+  devSetManufacturerJoiSchema,
   changeThemeJoiScheme,
   addMasterjoiSchema,
   deleteMasterJoiSchema,
@@ -35,7 +35,7 @@ userRouter.post(
 );
 userRouter.post(
   '/deviceSettingsManufacturer',
-  validateBody(addDevSetManufacturerJoiSchema),
+  validateBody(devSetManufacturerJoiSchema),
   UserController.addDevManufacturer
 );
 userRouter.patch(
@@ -52,6 +52,11 @@ userRouter.delete(
   '/deviceType',
   validateBody(devSetTypeJoiSchema),
   UserController.deleleType
+);
+userRouter.delete(
+  '/deviceManufacturer',
+  validateBody(devSetManufacturerJoiSchema),
+  UserController.deleteManufacturer
 );
 
 module.exports = userRouter;

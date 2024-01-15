@@ -1,6 +1,6 @@
 module.exports = {
-  devSetTypeJoiSchema: require('./addDevSetType'),
-  addDevSetManufacturerJoiSchema: require('./addDevSetManufacturer'),
+  devSetTypeJoiSchema: require('./devSetType'),
+  devSetManufacturerJoiSchema: require('./devSetManufacturer'),
   changeThemeJoiScheme: require('./changeTheme'),
   addMasterjoiSchema: require('./addMaster'),
   deleteMasterJoiSchema: require('./deleteMaster'),
