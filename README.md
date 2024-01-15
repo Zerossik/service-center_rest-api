@@ -140,6 +140,12 @@ headers{
 Видаляє контакт за його ID
 ___
 ### USER
+Всі запити на адресу USER отримують `'Authorization': 'Bearer token'`
+```js
+headers{
+"authorization": "Bearer token"
+}
+```
 ___
 ### `POST https://service-center-6fck.onrender.com/api/user/changeTheme - changeTheme`
 Запит на зміну теми. Отримує body з полем `theme`
@@ -196,4 +202,17 @@ ___
 ```
 При успішному оновленні сервер поверне оновленого виробника.
 ___
-
+### `DELETE https://service-center-6fck.onrender.com/api/user/deviceType - delete deviceType`
+Запит на видалення типу техніки. body отримує поле `type`.
+```json
+"type": "your type: String"
+```
+Якщо тип був успішно видалений, то сервер відправе успішну відповідь, інакше - помилку.
+___
+### `DELETE https://service-center-6fck.onrender.com/api/user/deviceManufacturer - delete deviceManufacturer`
+Запит на видалення виробника. body отримує поле `manufacturer`.
+```json
+"manufacturer": "your manufacturer: String"
+```
+Якщо виробник був успішно видалений, то сервер відправе успішну відповідь, інакше - помилку.
+___
