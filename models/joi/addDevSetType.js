@@ -1,6 +1,6 @@
 const joi = require('joi');
 
-const addDevSetTypeJoiSchema = joi.object({
+const devSetTypeJoiSchema = joi.object({
   type: joi.string().required(),
 });
-module.exports = addDevSetTypeJoiSchema;
+module.exports = devSetTypeJoiSchema;

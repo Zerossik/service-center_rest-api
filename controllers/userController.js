@@ -281,6 +281,39 @@ class UserController {
       ),
     });
   });
+  deleleType = tryCatchDecorator(async (req, res) => {
+    const { type } = req.body;
+    const { _id: id } = req.user;
+    const trimedType =
+      typeof type === 'string' ? firstLetterUpperCase(type.trim()) : undefined;
+    if (!trimedType) throw httpError(400);
+
+    const contacts = await Contacts.find({
+      owner: id,
+      type: trimedType,
+    }).count();
+    if (contacts)
+      throw httpError(400, 'Bad Request. The Contacts List is not empty.');
+
+    const findType = await DevSetModel.findOne({
+      owner: id,
+      'deviceTypes.deviceType': trimedType,
+    });
+    if (!findType) throw httpError(404, `The type '${trimedType}' Not Found`);
+
+    const typeIndex = findType.deviceTypes.findIndex(
+      ({ deviceType }) => deviceType === trimedType
+    );
+    const [deletedType] = findType.deviceTypes.splice(typeIndex, 1);
+    await findType.save();
+
+    res.status(200);
+    res.json({
+      code: 200,
+      message: `The type '${deletedType.deviceType}' was deleted`,
+      data: deletedType,
+    });
+  });
 }
 
 module.exports = new UserController();
