@@ -293,7 +293,10 @@ class UserController {
       type: trimedType,
     }).count();
     if (contacts)
-      throw httpError(400, 'Bad Request. The Contacts List is not empty.');
+      throw httpError(
+        400,
+        `Bad Request. The Contacts List with type - '${trimedType}' is not empty.`
+      );
 
     const findType = await DevSetModel.findOne({
       owner: id,
@@ -310,8 +313,52 @@ class UserController {
     res.status(200);
     res.json({
       code: 200,
-      message: `The type '${deletedType.deviceType}' was deleted`,
+      message: `The type - '${deletedType.deviceType}' was deleted`,
       data: deletedType,
+    });
+  });
+  deleteManufacturer = tryCatchDecorator(async (req, res) => {
+    const { manufacturer } = req.body;
+    const { _id: id } = req.user;
+    const trimedManufacturer =
+      typeof manufacturer === 'string'
+        ? firstLetterUpperCase(manufacturer.trim())
+        : undefined;
+    if (!trimedManufacturer) throw httpError(400);
+
+    const manufacturers = await Contacts.find({
+      owner: id,
+      manufacturer: trimedManufacturer,
+    }).count();
+    if (manufacturers)
+      throw httpError(
+        400,
+        `Bad Request. The Contacts List with manufacturer - '${trimedManufacturer}' is not empty.`
+      );
+
+    const findManufacturer = await DevSetModel.findOne({
+      owner: id,
+      'deviceManufacturers.manufacturer': trimedManufacturer,
+    });
+    if (!findManufacturer)
+      throw httpError(
+        404,
+        `The manufacturer '${trimedManufacturer}' Not Found`
+      );
+    const manufacturerIndex = findManufacturer.deviceManufacturers.findIndex(
+      ({ manufacturer }) => manufacturer === trimedManufacturer
+    );
+    const [deletedManufacturer] = findManufacturer.deviceManufacturers.splice(
+      manufacturerIndex,
+      1
+    );
+    await findManufacturer.save();
+
+    res.status(200);
+    res.json({
+      code: 200,
+      message: `The manufacturer - '${deletedManufacturer.manufacturer}' was deleted`,
+      data: deletedManufacturer,
     });
   });
 }
