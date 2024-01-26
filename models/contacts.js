@@ -17,29 +17,38 @@ const joiContactSchema = joi.object({
   failure: joi.string().required(),
 });
 
-const contactSchema = new Schema({
-  orderNumber: {
-    type: String,
-    default: '1',
+const contactSchema = new Schema(
+  {
+    orderNumber: {
+      type: String,
+      default: '1',
+    },
+    type: { type: String, required: [true, 'device type is required'] },
+    manufacturer: {
+      type: String,
+      required: [true, 'manufacturer is required'],
+    },
+    model: { type: String, required: [true, 'model is required'] },
+    deviceID: { type: String, default: '' },
+    customerName: {
+      type: String,
+      required: [true, 'customer name is required'],
+    },
+    phoneNumber: { type: String, required: [true, 'phone number is required'] },
+    price: { type: Number, default: 0 },
+    status: {
+      type: String,
+      default: 'Прийнято',
+    },
+    masterName: { type: String, default: '' },
+    // startDate: { type: Date, default: Date.now },
+    endDate: { type: Date },
+    owner: { type: Schema.Types.ObjectId, ref: 'user' },
+    description: { type: String },
+    failure: { type: String, required: [true, 'failure is required'] }, // несправність
   },
-  type: { type: String, required: [true, 'device type is required'] },
-  manufacturer: { type: String, required: [true, 'manufacturer is required'] },
-  model: { type: String, required: [true, 'model is required'] },
-  deviceID: { type: String, default: '' },
-  customerName: { type: String, required: [true, 'customer name is required'] },
-  phoneNumber: { type: String, required: [true, 'phone number is required'] },
-  price: { type: Number, default: 0 },
-  status: {
-    type: String,
-    default: 'Прийнято',
-  },
-  masterName: { type: String, default: '' },
-  startDate: { type: Date, default: Date.now },
-  endDate: { type: Date },
-  owner: { type: Schema.Types.ObjectId, ref: 'user' },
-  description: { type: String },
-  failure: { type: String, required: [true, 'failure is required'] }, // несправність
-});
+  { versionKey: false, timestamps: true }
+);
 
 const Contacts = newModel('contacts', contactSchema);
 
