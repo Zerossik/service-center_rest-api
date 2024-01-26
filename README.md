@@ -74,9 +74,16 @@ headers{
 "authorization": "Bearer token"
 }
 ```
-Для пагінації необхідно передати параметри **page** та **limit**. 
+Для пагінації необхідно передати параметри **page** та **limit**.    
 Наприклад: `https://service-center-6fck.onrender.com/api/contacts?page=1&limit=10`.  
-Якщо не передати параметри пагінації, то сервер поверне 100 контактів за замовчуванням.
+Якщо не передати параметри пагінації, то сервер поверне 20 контактів за замовчуванням.   
+
+Для фільтрування за типом, необхідно передати параметр **type**      
+Наприклад: `https://service-center-6fck.onrender.com/api/contacts?type=phone`    
+Сервер поверне всі записи з типом `phone`.    
+Для пошуку за ключовим словом, необхідно передати параметр **filter**    
+Наприклад: `https://service-center-6fck.onrender.com/api/contacts?filter=samsung`    
+Сервер поверне всі документи, які відповідають ключовому запиту.
 ___
 ### `GET https://service-center-6fck.onrender.com/api/contacts/:id - get contact by ID`
 Необхідно передати в headers поле `'Authorization': 'Bearer token'`
