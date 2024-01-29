@@ -32,7 +32,7 @@ class ContactsController {
     });
 
     res.status(200);
-    res.json(data.length !== 0 ? { code: 200, data: data } : null);
+    res.json({ code: 200, data: data });
   });
 
   addContact = tryCatchDecorator(async (req, res) => {
