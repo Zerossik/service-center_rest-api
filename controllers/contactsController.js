@@ -1,6 +1,6 @@
 const { tryCatchDecorator } = require('../decorators');
 const { httpError } = require('../helper');
-const { Contacts } = require('../models');
+const { Contacts, Archive } = require('../models');
 
 class ContactsController {
   getAll = tryCatchDecorator(async (req, res) => {
@@ -85,9 +85,24 @@ class ContactsController {
     });
     if (!updatedContact) throw httpError(404, `id ${id} Not Found`);
 
-    res.status(201);
+    if (updatedContact.status?.toLowerCase() === 'закінчено') {
+      const contact = await Contacts.findById(id);
+      if (!contact) throw httpError(404, `id ${id} Not Found`);
+
+      const archivedContact = await Archive.create(contact._doc);
+      await contact.deleteOne();
+      res.status(200);
+      res.json({
+        code: 200,
+        message: 'The contact has been updated and moved to the archive',
+        data: archivedContact,
+      });
+      return;
+    }
+
+    res.status(200);
     res.json({
-      code: 201,
+      code: 200,
       message: 'Contact is updated',
       data: updatedContact,
     });

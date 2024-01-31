@@ -1,5 +1,6 @@
 const { Schema, model: newModel } = require('mongoose');
 const joi = require('joi');
+const { firstLetterUpperCase } = require('../helper');
 
 const joiContactSchema = joi.object({
   type: joi.string().required(),
@@ -49,7 +50,40 @@ const contactSchema = new Schema(
   },
   { versionKey: false, timestamps: true }
 );
+contactSchema.pre('save', function (next) {
+  this.type = firstLetterUpperCase(this.type.trim());
+  this.manufacturer = firstLetterUpperCase(this.manufacturer.trim());
+  this.customerName = firstLetterUpperCase(this.customerName.trim());
+  if (this.masterName.trim()) {
+    this.masterName = firstLetterUpperCase(this.masterName.trim());
+  }
+
+  next();
+});
+contactSchema.pre('findOneAndUpdate', function (next) {
+  const { type, manufacturer, customerName, masterName } = this._update;
+  Object.keys(this._update).map(el => {
+    switch (el) {
+      case 'type':
+        this._update[el] = firstLetterUpperCase(type.trim());
+        break;
+      case 'manufacturer':
+        this._update[el] = firstLetterUpperCase(manufacturer.trim());
+        break;
+      case 'customerName':
+        this._update[el] = firstLetterUpperCase(customerName.trim());
+        break;
+      case 'masterName':
+        this._update[el] = firstLetterUpperCase(masterName.trim());
+        break;
+      default:
+        el;
+    }
+  });
+  next();
+});
 
 const Contacts = newModel('contacts', contactSchema);
+const Archive = newModel('archives', contactSchema);
 
-module.exports = { Contacts, joiContactSchema };
+module.exports = { Contacts, joiContactSchema, Archive };
