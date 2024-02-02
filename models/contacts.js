@@ -12,7 +12,6 @@ const joiContactSchema = joi.object({
   price: joi.number(),
   status: joi.string(),
   masterName: joi.string(),
-  startDate: joi.date(),
   endDate: joi.date(),
   description: joi.string(),
 });
@@ -41,11 +40,9 @@ const contactSchema = new Schema(
       default: 'Прийнято',
     },
     masterName: { type: String, default: '' },
-    // startDate: { type: Date, default: Date.now },
     endDate: { type: Date },
     owner: { type: Schema.Types.ObjectId, ref: 'user' },
     description: { type: String },
-    failure: { type: String, required: [true, 'failure is required'] }, // несправність
   },
   { versionKey: false, timestamps: true }
 );
