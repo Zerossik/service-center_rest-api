@@ -85,7 +85,7 @@ class ContactsController {
     });
     if (!updatedContact) throw httpError(404, `id ${id} Not Found`);
 
-    if (updatedContact.status?.toLowerCase() === 'закінчено') {
+    if (updatedContact.status?.toLowerCase() === 'видано') {
       const contact = await Contacts.findById(id);
       if (!contact) throw httpError(404, `id ${id} Not Found`);
 

@@ -15,7 +15,6 @@ const joiContactSchema = joi.object({
   startDate: joi.date(),
   endDate: joi.date(),
   description: joi.string(),
-  failure: joi.string().required(),
 });
 
 const contactSchema = new Schema(
