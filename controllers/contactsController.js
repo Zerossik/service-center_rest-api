@@ -107,6 +107,38 @@ class ContactsController {
       data: updatedContact,
     });
   });
+
+  getArchive = tryCatchDecorator(async (req, res) => {
+    const { _id: owner } = req.user;
+    const { page = 1, limit = 20, type, filter } = req.query;
+    const skip = (page - 1) * limit;
+
+    const searchSettings = {
+      owner,
+    };
+
+    if (type) searchSettings.type = { $regex: type, $options: 'i' };
+    if (filter)
+      searchSettings.$or = [
+        { orderNumber: { $regex: filter, $options: 'i' } },
+        { deviceID: { $regex: filter, $options: 'i' } },
+        { model: { $regex: filter, $options: 'i' } },
+        { description: { $regex: filter, $options: 'i' } },
+        { customerName: { $regex: filter, $options: 'i' } },
+        { phoneNumber: { $regex: filter, $options: 'i' } },
+      ];
+
+    const data = await Archive.find(searchSettings, null, {
+      skip,
+      limit,
+    }).sort({
+      startDate: -1,
+      createdAt: -1,
+    });
+
+    res.status(200);
+    res.json({ code: 200, data: data });
+  });
 }
 
 module.exports = new ContactsController();
