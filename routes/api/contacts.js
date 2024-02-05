@@ -10,7 +10,9 @@ const { joiContactSchema } = require('../../models');
 contactsRouter.use(isAuthenticated);
 
 contactsRouter.get('/', ContactsController.getAll);
+contactsRouter.get('/archive', ContactsController.getArchive);
 contactsRouter.get('/:id', isValidObjtId, ContactsController.getContactById);
+
 contactsRouter.post(
   '/',
   validateBody(joiContactSchema),
@@ -18,4 +20,5 @@ contactsRouter.post(
 );
 contactsRouter.delete('/:id', isValidObjtId, ContactsController.deleteContact);
 contactsRouter.patch('/:id', ContactsController.updateContact);
+
 module.exports = contactsRouter;
