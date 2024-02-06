@@ -30,9 +30,10 @@ class ContactsController {
       startDate: -1,
       createdAt: -1,
     });
+    const totalOrders = await Contacts.find(searchSettings).count();
 
     res.status(200);
-    res.json({ code: 200, data: data });
+    res.json({ code: 200, data: data, totalOrders });
   });
 
   addContact = tryCatchDecorator(async (req, res) => {
@@ -135,9 +136,10 @@ class ContactsController {
       startDate: -1,
       createdAt: -1,
     });
+    const totalOrders = await Archive.find(searchSettings).count();
 
     res.status(200);
-    res.json({ code: 200, data: data });
+    res.json({ code: 200, data: data, totalOrders });
   });
 }
 
