@@ -3,6 +3,9 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 
 const isAuthenticated = async (req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    next()
+}
   try {
     const { SECRET_KEY } = process.env;
 
