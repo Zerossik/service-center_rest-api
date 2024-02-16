@@ -14,9 +14,14 @@ app.use(
     stream: fs.createWriteStream(path.resolve('access.log'), { flags: 'a' }),
   })
 );
+const corsSetings = {
+  origin: '*',
+  preflightContinue: true,
+  optionsSuccessStatus: 200,
+};
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsSetings));
 
 app.use('/api/auth', authRouter);
 app.use('/api/contacts', contactsRouter);
