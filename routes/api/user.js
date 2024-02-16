@@ -11,7 +11,9 @@ const {
 } = require('../../models/joi');
 
 const userRouter = require('express').Router();
+
 userRouter.use(isAuthenticated);
+
 userRouter.post(
   '/changeTheme',
   validateBody(changeThemeJoiScheme),
@@ -22,11 +24,11 @@ userRouter.post(
   validateBody(addMasterjoiSchema),
   UserController.addMaster
 );
-userRouter.delete(
-  '/deleteMaster',
-  validateBody(deleteMasterJoiSchema),
-  UserController.deleteMaster
-);
+// userRouter.delete(
+//   '/deleteMaster',
+//   validateBody(deleteMasterJoiSchema),
+//   UserController.deleteMaster
+// );
 userRouter.get('/deviceSettings', UserController.getDevSet);
 userRouter.post(
   '/deviceSettingsType',
@@ -38,25 +40,25 @@ userRouter.post(
   validateBody(devSetManufacturerJoiSchema),
   UserController.addDevManufacturer
 );
-userRouter.patch(
-  '/deviceTypeUpdate',
-  validateBody(devTypeUpdateJoiSchema),
-  UserController.devTypeUpdate
-);
-userRouter.patch(
-  '/deviceManufacturerUpdate',
-  validateBody(devManufUpdJoiSchema),
-  UserController.devManufacturerUpdate
-);
-userRouter.delete(
-  '/deviceType',
-  validateBody(devSetTypeJoiSchema),
-  UserController.deleleType
-);
-userRouter.delete(
-  '/deviceManufacturer',
-  validateBody(devSetManufacturerJoiSchema),
-  UserController.deleteManufacturer
-);
+// userRouter.patch(
+//   '/deviceTypeUpdate',
+//   validateBody(devTypeUpdateJoiSchema),
+//   UserController.devTypeUpdate
+// );
+// userRouter.patch(
+//   '/deviceManufacturerUpdate',
+//   validateBody(devManufUpdJoiSchema),
+//   UserController.devManufacturerUpdate
+// );
+// userRouter.delete(
+//   '/deviceType',
+//   validateBody(devSetTypeJoiSchema),
+//   UserController.deleleType
+// );
+// userRouter.delete(
+//   '/deviceManufacturer',
+//   validateBody(devSetManufacturerJoiSchema),
+//   UserController.deleteManufacturer
+// );
 
 module.exports = userRouter;

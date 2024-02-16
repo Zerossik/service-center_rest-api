@@ -18,7 +18,7 @@ contactsRouter.post(
   validateBody(joiContactSchema),
   ContactsController.addContact
 );
-contactsRouter.delete('/:id', isValidObjtId, ContactsController.deleteContact);
-contactsRouter.patch('/:id', ContactsController.updateContact);
+// contactsRouter.delete('/:id', isValidObjtId, ContactsController.deleteContact);
+// contactsRouter.patch('/:id', ContactsController.updateContact);
 
 module.exports = contactsRouter;
