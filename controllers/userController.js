@@ -71,15 +71,15 @@ class UserController {
   });
   getDevSet = tryCatchDecorator(async (req, res) => {
     const { _id: id } = req.user;
+
     const data = await DevSetModel.findOne({ owner: id });
     if (!data) throw httpError(404);
     res.status(200);
     res.json({
       code: 200,
       data: {
-        deviceTypes: data.deviceTypes.length > 0 ? data.deviceTypes : null,
-        deviceManufacturers:
-          data.deviceManufacturers.length > 0 ? data.deviceManufacturers : null,
+        deviceTypes: data.deviceTypes,
+        deviceManufacturers: data.deviceManufacturers,
       },
     });
   });
