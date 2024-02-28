@@ -1,4 +1,4 @@
-const { User, GoogleModel, TokenModel } = require('../models');
+const { User, GoogleModel, TokenModel, DevSetModel } = require('../models');
 const { tryCatchDecorator } = require('../decorators');
 const {
   httpError,
@@ -32,6 +32,8 @@ class AuthController {
       password: hashPassword,
       verificationToken,
     });
+
+    await DevSetModel.create({ owner: userCreated._id });
 
     res.status(201);
     res.json({

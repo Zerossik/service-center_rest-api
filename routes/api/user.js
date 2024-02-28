@@ -30,6 +30,7 @@ userRouter.delete(
   UserController.deleteMaster
 );
 userRouter.get('/deviceSettings', UserController.getDevSet);
+
 userRouter.post(
   '/deviceSettingsType',
   validateBody(devSetTypeJoiSchema),
