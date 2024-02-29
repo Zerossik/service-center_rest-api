@@ -48,6 +48,14 @@ const userSchema = new Schema(
       ],
       default: [],
     },
+    role: {
+      type: String,
+      default: 'user',
+    },
+    accountStatus: {
+      type: String,
+      default: 'basic',
+    },
   },
   { versionKey: false, timestamps: true }
 ); // Схема user для моделі MongoDB
