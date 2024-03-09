@@ -1,6 +1,6 @@
 const { tryCatchDecorator } = require('../decorators');
 const { httpError, firstLetterUpperCase } = require('../helper');
-const { User, DevSetModel, Contacts } = require('../models');
+const { User, userSettings, Contacts } = require('../models');
 
 class UserController {
   changeTheme = tryCatchDecorator(async (req, res) => {
@@ -72,7 +72,7 @@ class UserController {
   getDevSet = tryCatchDecorator(async (req, res) => {
     const { _id: id } = req.user;
 
-    const data = await DevSetModel.findOne({ owner: id });
+    const data = await userSettings.findOne({ owner: id });
     if (!data) throw httpError(404);
     res.status(200);
     res.json({
@@ -92,9 +92,9 @@ class UserController {
 
     if (!trimedType) throw httpError(400, 'Bad Request, type is required'); // перевіряю, чи передали type, якщо ні - викидаю помилку
 
-    const user = await DevSetModel.findOne({ owner: id }); // шукаю користувача по id, якщо користувача не існує, то створюю.
+    const user = await userSettings.findOne({ owner: id }); // шукаю користувача по id, якщо користувача не існує, то створюю.
     if (!user) {
-      const newUser = new DevSetModel({
+      const newUser = new userSettings({
         owner: id,
         deviceTypes: [{ deviceType: trimedType }],
       });
@@ -136,9 +136,9 @@ class UserController {
     if (!trimedManufacturer)
       throw httpError(400, 'Bad Request, manufacturer is required'); // перевіряю чи передали manufacturer, якщо ні - викидаю помилку 400
 
-    const user = await DevSetModel.findOne({ owner: id }); // шукаю користувача по id, якщо користувача не існує, то створюю.
+    const user = await userSettings.findOne({ owner: id }); // шукаю користувача по id, якщо користувача не існує, то створюю.
     if (!user) {
-      const newUser = new DevSetModel({
+      const newUser = new userSettings({
         owner: id,
         deviceManufacturers: [{ manufacturer: trimedManufacturer }],
       });
@@ -187,7 +187,7 @@ class UserController {
     if (!(trimedOldType && trimedNewType) || trimedOldType === trimedNewType)
       throw httpError(400, 'expected oldType and newType');
 
-    const devSet = await DevSetModel.findOne({
+    const devSet = await userSettings.findOne({
       owner: id,
     });
 
@@ -207,7 +207,7 @@ class UserController {
       { type: trimedNewType }
     ); // оновлюю всі типи в коллекції контакти
 
-    const data = await DevSetModel.findOneAndUpdate(
+    const data = await userSettings.findOneAndUpdate(
       {
         owner: id,
         'deviceTypes.deviceType': trimedOldType,
@@ -244,7 +244,7 @@ class UserController {
     )
       throw httpError(400, 'expected oldManufacturer and newManufacturer');
 
-    const devSet = await DevSetModel.findOne({
+    const devSet = await userSettings.findOne({
       owner: id,
     });
 
@@ -263,7 +263,7 @@ class UserController {
       { manufacturer: trimedNewManufacturer }
     ); // оновлюю всі manufacturers в коллекції контакти
 
-    const data = await DevSetModel.findOneAndUpdate(
+    const data = await userSettings.findOneAndUpdate(
       {
         owner: id,
         'deviceManufacturers.manufacturer': trimedOldManufacturer,
@@ -298,7 +298,7 @@ class UserController {
         `Bad Request. The Contacts List with type - '${trimedType}' is not empty.`
       );
 
-    const findType = await DevSetModel.findOne({
+    const findType = await userSettings.findOne({
       owner: id,
       'deviceTypes.deviceType': trimedType,
     });
@@ -336,7 +336,7 @@ class UserController {
         `Bad Request. The Contacts List with manufacturer - '${trimedManufacturer}' is not empty.`
       );
 
-    const findManufacturer = await DevSetModel.findOne({
+    const findManufacturer = await userSettings.findOne({
       owner: id,
       'deviceManufacturers.manufacturer': trimedManufacturer,
     });

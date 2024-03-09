@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose');
 
-const deviceSettingsSchema = new Schema({
+const userSettingsSchema = new Schema({
   owner: {
     type: Schema.Types.ObjectId,
     ref: 'user',
@@ -16,6 +16,6 @@ const deviceSettingsSchema = new Schema({
   },
 });
 
-const DevSetModel = model('deviceSettings', deviceSettingsSchema);
+const userSettings = model('userSettings', userSettingsSchema);
 
-module.exports = DevSetModel;
+module.exports = userSettings;
