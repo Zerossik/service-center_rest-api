@@ -9,6 +9,6 @@ module.exports = {
   GoogleModel: require('./googleModel'),
   Contacts,
   joiContactSchema,
-  UserSettings: require('./UserSettings'),
+  UserSettings: require('./userSettings'),
   Archive,
 };
