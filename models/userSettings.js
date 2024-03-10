@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose');
 
-const userSettingsSchema = new Schema({
+const UserSettingsSchema = new Schema({
   owner: {
     type: Schema.Types.ObjectId,
     ref: 'user',
@@ -14,8 +14,13 @@ const userSettingsSchema = new Schema({
     type: [{ id: Schema.Types.ObjectId, manufacturer: String }],
     default: [],
   },
+
+  orderNumber: {
+    type: Number,
+    default: 0,
+  },
 });
 
-const userSettings = model('userSettings', userSettingsSchema);
+const UserSettings = model('userSettings', UserSettingsSchema);
 
-module.exports = userSettings;
+module.exports = UserSettings;
