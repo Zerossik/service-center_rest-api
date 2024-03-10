@@ -1,6 +1,6 @@
 const { tryCatchDecorator } = require('../decorators');
 const { httpError } = require('../helper');
-const { Contacts, Archive } = require('../models');
+const { Contacts, Archive, UserSettings } = require('../models');
 
 class ContactsController {
   getAll = tryCatchDecorator(async (req, res) => {
@@ -39,19 +39,18 @@ class ContactsController {
   addContact = tryCatchDecorator(async (req, res) => {
     const { _id: owner } = req.user;
 
-    const result = await Contacts.findOne({ owner: req.user._id }).sort({
-      $natural: -1,
-    });
-
-    let orderNumberCounter;
-    if (result) {
-      orderNumberCounter = Number(result.orderNumber) + 1;
-    }
+    const newOrderNumber = await UserSettings.findOneAndUpdate(
+      {
+        owner,
+      },
+      { $inc: { orderNumber: 1 } },
+      { new: true }
+    );
 
     const data = await Contacts.create({
       ...req.body,
       owner,
-      orderNumber: orderNumberCounter,
+      orderNumber: newOrderNumber.orderNumber,
     });
 
     res.status(201);
