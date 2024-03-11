@@ -361,6 +361,20 @@ class UserController {
       data: deletedManufacturer,
     });
   });
+  tableSettings = tryCatchDecorator(async (req, res) => {
+    const { _id: owner } = req.user;
+    const settings = req.body;
+
+    const data = await UserSettings.findOneAndUpdate(
+      { owner },
+      { $set: { tableSettings: settings } },
+      { new: true }
+    );
+    if (!data) throw httpError(404);
+
+    res.status(200);
+    res.json({ code: 200, data });
+  });
 }
 
 module.exports = new UserController();

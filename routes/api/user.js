@@ -41,6 +41,7 @@ userRouter.post(
   validateBody(devSetManufacturerJoiSchema),
   UserController.addDevManufacturer
 );
+
 userRouter.patch(
   '/deviceTypeUpdate',
   validateBody(devTypeUpdateJoiSchema),
@@ -61,5 +62,6 @@ userRouter.delete(
   validateBody(devSetManufacturerJoiSchema),
   UserController.deleteManufacturer
 );
+userRouter.put('/tableSettings', UserController.tableSettings);
 
 module.exports = userRouter;
