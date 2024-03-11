@@ -6,4 +6,5 @@ module.exports = {
   deleteMasterJoiSchema: require('./deleteMaster'),
   devTypeUpdateJoiSchema: require('./devTypeUpdate'),
   devManufUpdJoiSchema: require('./devManufacturerUpdate'),
+  tableSettingsJoiSchema: require('./tableSettings'),
 };

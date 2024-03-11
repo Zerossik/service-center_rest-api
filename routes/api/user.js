@@ -8,6 +8,7 @@ const {
   deleteMasterJoiSchema,
   devTypeUpdateJoiSchema,
   devManufUpdJoiSchema,
+  tableSettingsJoiSchema,
 } = require('../../models/joi');
 
 const userRouter = require('express').Router();
@@ -62,6 +63,10 @@ userRouter.delete(
   validateBody(devSetManufacturerJoiSchema),
   UserController.deleteManufacturer
 );
-userRouter.put('/tableSettings', UserController.tableSettings);
+userRouter.put(
+  '/tableSettings',
+  validateBody(tableSettingsJoiSchema),
+  UserController.tableSettings
+);
 
 module.exports = userRouter;
