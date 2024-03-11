@@ -387,3 +387,28 @@ headers{
 інакше - помилку.
 
 ---
+
+### `PUT https://service-center-6fck.onrender.com/api/user/tableSettings - add and update table settings`
+
+Запит на збереження або оновлення налаштувань таблиці. body отримує массив з
+об'єктами.
+
+```json
+[
+  {
+    "id": "1",
+    "order": 1,
+    "buttonName": "#",
+    "columnName": "countNumber",
+    "isActive": false,
+    "sortDown": null,
+    "isVisible": false,
+    "isDisabled": false
+  }
+]
+```
+
+Якщо виробник був успішно видалений, то сервер відправе успішну відповідь,
+інакше - помилку.
+
+---

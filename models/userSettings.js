@@ -19,6 +19,21 @@ const UserSettingsSchema = new Schema({
     type: Number,
     default: 0,
   },
+  tableSettings: {
+    type: [
+      {
+        id: String,
+        order: Number,
+        buttonName: String,
+        columnName: String,
+        isActive: Boolean,
+        isVisible: Boolean,
+        isDisabled: Boolean,
+        sortDown: null || Boolean,
+      },
+    ],
+    default: [],
+  },
 });
 
 const UserSettings = model('userSettings', UserSettingsSchema);
