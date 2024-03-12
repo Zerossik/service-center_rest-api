@@ -80,6 +80,7 @@ class UserController {
       data: {
         deviceTypes: data.deviceTypes,
         deviceManufacturers: data.deviceManufacturers,
+        tableSettings: data.tableSettings,
       },
     });
   });
@@ -373,7 +374,10 @@ class UserController {
     if (!data) throw httpError(404);
 
     res.status(200);
-    res.json({ code: 200, data });
+    res.json({
+      code: 200,
+      message: 'Table settings have been updated',
+    });
   });
 }
 
