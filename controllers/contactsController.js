@@ -89,7 +89,11 @@ class ContactsController {
       const contact = await Contacts.findById(id);
       if (!contact) throw httpError(404, `id ${id} Not Found`);
 
-      const archivedContact = await Archive.create(contact._doc);
+      const archivedContact = await Archive.create({
+        ...contact._doc,
+        issueDate: new Date(),
+      });
+
       await contact.deleteOne();
       res.status(200);
       res.json({

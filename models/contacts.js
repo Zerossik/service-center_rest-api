@@ -80,6 +80,5 @@ contactSchema.pre('findOneAndUpdate', function (next) {
 });
 
 const Contacts = newModel('contacts', contactSchema);
-const Archive = newModel('archives', contactSchema);
 
-module.exports = { Contacts, joiContactSchema, Archive };
+module.exports = { Contacts, joiContactSchema };
