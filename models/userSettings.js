@@ -22,6 +22,7 @@ const UserSettingsSchema = new Schema({
   tableSettings: {
     type: [
       {
+        _id: false,
         id: String,
         order: Number,
         buttonName: String,
