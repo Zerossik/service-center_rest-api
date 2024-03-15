@@ -9,6 +9,7 @@ authRouter.post(
   validateBody(joiUserSchemaSignUp),
   AuthController.signup
 );
+authRouter.get('/verify/:verificationToken', AuthController.verifyEmail);
 
 authRouter.post(
   '/signin',

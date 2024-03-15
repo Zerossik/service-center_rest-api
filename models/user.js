@@ -33,13 +33,12 @@ const userSchema = new Schema(
       required: [true, 'Set password for user'],
     },
     token: String,
-    veryfy: {
+    verify: {
       type: Boolean,
       default: false,
     },
     verificationToken: {
       type: String,
-      required: [true, 'Verify token is required'],
     },
     theme: { type: String, default: 'light' },
     masters: {

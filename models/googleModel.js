@@ -10,7 +10,7 @@ const googleAuthSchema = new Schema(
     },
 
     token: String,
-    veryfy: {
+    verify: {
       type: Boolean,
       default: true,
     },
