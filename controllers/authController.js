@@ -97,7 +97,8 @@ class AuthController {
     user.verificationToken = '';
     await user.save();
 
-    res.redirect(FRONTEND_URL);
+    res.status(200);
+    res.json({ code: 200, message: 'Your account verified' });
   });
 
   resendEmail = tryCatchDecorator(async (req, res) => {
