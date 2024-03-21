@@ -100,6 +100,35 @@ class AuthController {
     res.redirect(FRONTEND_URL);
   });
 
+  resendEmail = tryCatchDecorator(async (req, res) => {
+    const { email } = req.body;
+
+    if ((typeof email === 'string' && !email.trim()) || !email)
+      throw httpError(400, 'email is required');
+
+    const user = await User.findOne({
+      email: email.toLowerCase(),
+    });
+    console.log(user);
+    if (!user) throw httpError(404, `User with ${email} not Found`);
+
+    if (user.verify)
+      throw httpError(404, 'Verification has already been passed');
+
+    const data = {
+      to: email,
+      subject: 'Підтвердження email',
+      html: verifyEmail(user.verificationToken),
+    };
+
+    sendEmail(data)
+      .then(() => console.log('Email sended'))
+      .catch(error => console.log(error.message));
+
+    res.status(200);
+    res.json({ code: 200, message: 'Email sended' });
+  });
+
   requestPasswordReset = tryCatchDecorator(async (req, res) => {
     const { email } = req.body;
     if (!email) throw httpError(400);

@@ -7,4 +7,5 @@ module.exports = {
   devTypeUpdateJoiSchema: require('./devTypeUpdate'),
   devManufUpdJoiSchema: require('./devManufacturerUpdate'),
   tableSettingsJoiSchema: require('./tableSettings'),
+  emailJoiSchema: require('./validateEmail'),
 };
