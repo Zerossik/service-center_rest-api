@@ -3,11 +3,18 @@ const { AuthController } = require('../../controllers');
 const { validateBody } = require('../../middleware');
 const { joiUserSchemaSignUp, joiUserSchemaSignIn } = require('../../models');
 const { isAuthenticated } = require('../../middleware');
+const { emailJoiSchema } = require('../../models/joi');
 
 authRouter.post(
   '/signup',
   validateBody(joiUserSchemaSignUp),
   AuthController.signup
+);
+authRouter.get('/verify/:verificationToken', AuthController.verifyEmail);
+authRouter.post(
+  '/resendEmail',
+
+  AuthController.resendEmail
 );
 
 authRouter.post(

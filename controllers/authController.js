@@ -11,8 +11,8 @@ const { nanoid } = require('nanoid');
 const queryString = require('query-string');
 const { URL } = require('url');
 const axios = require('axios');
-const resetPassEmail = require('../template/resetPasswordEmail');
 const crypto = require('crypto');
+const { verifyEmail, resetPassTmpl } = require('../template');
 
 class AuthController {
   signup = tryCatchDecorator(async (req, res) => {
@@ -35,6 +35,16 @@ class AuthController {
 
     await UserSettings.create({ owner: userCreated._id });
 
+    const data = {
+      to: email,
+      subject: 'Підтвердження email',
+      html: verifyEmail(verificationToken),
+    };
+
+    sendEmail(data)
+      .then(() => console.log('Email sended'))
+      .catch(error => console.log(error.message));
+
     res.status(201);
     res.json({
       code: 201,
@@ -55,11 +65,11 @@ class AuthController {
 
     if (!user || !user.password)
       throw httpError(401, 'Email or password is wrong');
-    // if (!user.veryfy) throw httpError(401, 'email address not confirmed'); // необхідно реалізувати підтвердження email користувача.
+    if (!user.verify) throw httpError(401, 'email address not confirmed'); // необхідно реалізувати підтвердження email користувача.
 
-    const veryfyPass = await bcrypt.compare(password, user.password);
+    const verifyPass = await bcrypt.compare(password, user.password);
 
-    if (!veryfyPass) throw httpError(401, 'Email or password is wrong');
+    if (!verifyPass) throw httpError(401, 'Email or password is wrong');
 
     const token = createToken(user._id);
 
@@ -74,6 +84,49 @@ class AuthController {
         email: user.email,
       },
     });
+  });
+
+  verifyEmail = tryCatchDecorator(async (req, res) => {
+    const { verificationToken } = req.params;
+    const { FRONTEND_URL } = process.env;
+
+    const user = await User.findOne({ verificationToken });
+    if (!user) throw httpError(404, 'User Not Found');
+
+    user.verify = true;
+    user.verificationToken = '';
+    await user.save();
+
+    res.redirect(FRONTEND_URL);
+  });
+
+  resendEmail = tryCatchDecorator(async (req, res) => {
+    const { email } = req.body;
+
+    if ((typeof email === 'string' && !email.trim()) || !email)
+      throw httpError(400, 'email is required');
+
+    const user = await User.findOne({
+      email: email.toLowerCase(),
+    });
+    console.log(user);
+    if (!user) throw httpError(404, `User with ${email} not Found`);
+
+    if (user.verify)
+      throw httpError(404, 'Verification has already been passed');
+
+    const data = {
+      to: email,
+      subject: 'Підтвердження email',
+      html: verifyEmail(user.verificationToken),
+    };
+
+    sendEmail(data)
+      .then(() => console.log('Email sended'))
+      .catch(error => console.log(error.message));
+
+    res.status(200);
+    res.json({ code: 200, message: 'Email sended' });
   });
 
   requestPasswordReset = tryCatchDecorator(async (req, res) => {
@@ -98,11 +151,13 @@ class AuthController {
     const data = {
       to: email,
       subject: 'Скидання паролю',
-      html: resetPassEmail(newToken, user._id),
+      html: resetPassTmpl(newToken, user._id),
     };
 
     sendEmail(data)
-      .then(() => console.log('Email sended'))
+      .then(() => {
+        console.log('Email sended');
+      })
       .catch(error => console.log(error.message));
 
     res.status(204);
